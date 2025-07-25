@@ -1,0 +1,26 @@
+# 特許調査レポート (A_IPC_Relaxed)
+
+## 1. 調査テーマ
+逆浸透膜における機械学習を用いた運転最適化
+
+## 2. 検索戦略
+IPCをOR条件で緩和し、キーワードはAND条件を維持。技術分野を広げ、技術要素の組み合わせは厳密に保つ。
+
+## 3. 実行されたSQLクエリ
+```sql
+
+    SELECT p.publication_number,
+           (SELECT text FROM UNNEST(p.title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+           (SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract
+    FROM `patents-public-data.patents.publications` AS p
+    WHERE (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_0) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_1) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_2)) AND ((LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_0 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_1 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_2) AND (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_3 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_4 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_5 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_6) AND (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_7 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_8 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_9 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_10))
+    LIMIT 50
+    
+```
+
+## 4. 検索結果 (0件)
+指定された条件に一致する特許は見つかりませんでした。
+
+
+## 5. LLMによる評価
+検索結果は0件でした。この検索戦略では、条件に合致する特許が見つかりませんでした。

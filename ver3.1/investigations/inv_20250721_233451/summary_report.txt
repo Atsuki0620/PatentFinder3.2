@@ -1,0 +1,105 @@
+
+# 特許調査レポート
+
+## 1. 調査テーマ
+逆浸透膜における機械学習を用いた運転最適化
+
+## 2. 検索条件
+
+### 2.1. キーワード
+- **選定キーワード:**
+{
+  "逆浸透膜技術": [
+    "逆浸透膜",
+    "RO膜",
+    "海水淡水化"
+  ],
+  "AI・機械学習": [
+    "機械学習",
+    "AI",
+    "予測モデル"
+  ],
+  "最適化・効率化": [
+    "運転最適化",
+    "効率化",
+    "省エネルギー"
+  ]
+}
+- **選定理由:**
+主要な技術要素（逆浸透膜、機械学習、最適化）について、最も一般的で中心的な同義語を選択し、検索の核を定義しました。広範すぎる上位概念（例：半透膜）はノイズを増やす可能性があるため、意図的に除外しています。
+
+### 2.2. 特許分類 (CPC)
+- **選定分類:**
+[
+  "B01D61/02",
+  "G05B13/02",
+  "C02F1/44"
+]
+- **選定理由:**
+ハードウェア（B01D, C02F）とソフトウェア（G05B）の両側面をカバーする特許分類を選択しました。これにより、装置そのものの発明と、制御方法の発明の両方をバランス良く捉えることを目的としています。
+
+## 3. 実行されたSQLクエリ
+```sql
+
+    SELECT
+        p.publication_number,
+        (SELECT text FROM UNNEST(p.title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+        (SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract
+    FROM
+        `patents-public-data.patents.publications` AS p
+    WHERE (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_0) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_1) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_2)) OR (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_0 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_1 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_2 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_3 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_4 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_5 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_6 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_7 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_8)
+    LIMIT 10
+    
+```
+
+## 4. 検索結果 (上位10件)
+
+### [1] JP-2024001527-A
+- **タイトル:** Image recognition apparatus and image recognition method
+- **要約:** To enhance accuracy in detection of a detection target in an image recognition processing.SOLUTION: An image recognition apparatus 10 according to the present invention has an image acquiring unit 12 for acquiring a captured image, a first detection unit 14 for detecting a first region including a detection target in the captured image by using a first detection model obtained by machine learning using an image having an image size of a predetermined value or larger as an input, a second detection unit 16 for detecting a second region including a detection target in the captured image by using a second detection model obtained by machine learning using an image having an image size of a value less than a predetermined value as an input, and a determination unit 18 for invalidating detection of either of the first region and the second region if the first region and the second region are overlapped with each other in the captured image.SELECTED DRAWING: Figure 1
+---
+
+### [2] JP-2024003050-A
+- **タイトル:** Light-emitting device
+- **要約:** To provide a light-emitting device sealing a mounting area of a light-emitting element that is a light source, and suppressing a number of components while having excellent waterproofness enabling use under water.SOLUTION: A light-emitting device 1 is equipped with a substrate 10 that has wiring, a light-emitting element 11 mounted on the substrate 10, a reflector 12 that is an annular component surrounding a periphery of the light-emitting element 11 on the substrate 10, and a waterproof sheet 13 that is installed so as to cover an upper part of the light-emitting element 11 on the reflector 12 and transmits light emitted from the light-emitting element 11. A part in contact with the waterproof sheet 13 of the reflector 12 is pressed against the waterproof sheet 13 to be compressed, and a part in contact with the substrate 10 of the reflector 12 is pressed against the substrate 10 to be compressed, thereby preventing the invasion of liquid to a mounting area of the light-emitting element 11 surrounded by the reflector 12.SELECTED DRAWING: Figure 3
+---
+
+### [3] JP-2024005769-A
+- **タイトル:** Method for producing foam molded body
+- **要約:** To provide a method for producing a foam molded body, capable of conducting foam molding without using an SCF apparatus.SOLUTION: According to the present invention, a method for producing a foam molded body is provided which includes a step of extruding, from an extruder, a molten kneaded resin, which is made by melting and kneading a resin and a physical foaming agent in the extruder, to form a foam parison, the foam parison being molded to obtain the foam molded body, wherein: the physical foaming agent is in a liquid state at 25°C and 1 atm; and When a length from a longitudinal base end of an internal space of a cylinder of the extruder to a tip of a screw of the extruder is L, the physical foaming agent is injected into the cylinder of the extruder from a position 0.2 L or less from the base end of the extruder.SELECTED DRAWING: Figure 1
+---
+
+### [4] JP-2024010118-A
+- **タイトル:** Combination of histone deacetylase inhibition medicine and immunomodulator
+- **要約:** To provide a pharmaceutical combination for treating multiple myeloma in a subject that requires treatment of multiple myeloma, and a method for treating multiple myeloma in a subject that requires treatment of multiple myeloma.SOLUTION: The present invention relates to a combination including HDAC inhibitor and immunomodulator for treating multiple myeloma in a subject that requires treatment of multiple myeloma. The combination may further contain an antiinflammatory agent such as dexamethasone, optionally. Herein, there is also provided a method for treating multiple myeloma in a subject that requires treatment of multiple myeloma, the method comprising administering an effective amount of one of the combinations above to the object.SELECTED DRAWING: Figure 1
+---
+
+### [5] JP-2024012249-A
+- **タイトル:** Musical notation and musical score thereof
+- **要約:** To provide a musical score that solves the problem that although there are staff notation and tablature available as two types of musical scores used for a stringed instrument such as a guitar, the staff notation does not specify a style of rendition and never serves as means to transmit the style of rendition to a beginner etc., and the tablature shows only entries of the style of rendition to make a player unaware of what tune being played, namely, it cannot be known what style of rendition is with the staff notation and it cannot be known what tune is being played with the tablature.SOLUTION: Pitch names or syllable names are entered directly into the six lines or four lines of tablature, as shown in Fig.6, Fig.7 and Fig.8, and key signatures, accidentals, etc., are also used when necessary. A style of rendition can be grasped although it is difficult to grasp it with the staff notation, and the pitch names or syllable names also can be grasped although it is difficult to grasp them with the tablature. Musical notion with moving &#34;do&#34; provides musical notion accompanied by analysis of complicated melodies and chords as evolutionary effect.SELECTED DRAWING: Figure 12
+---
+
+### [6] JP-2024013585-A
+- **タイトル:** Semiconductor device
+- **要約:** To suppress a void destroy of a solder.SOLUTION: A semiconductor device comprises: an electron component and a substrate which are arranged so as to be opposed in a first direction; and a solder connecting the electron component and the substrate. The electron component comprises a first electrode on a surface opposite to the substrate, and the substrate comprises a second electrode on a surface opposite to the electron component. The solder includes a bonding part as an inter-metal chemical compound to a boundary surface of the electron component and the substrate, and the solder contains Sn as a main component. Variation of a thickness in the first direction in the bonding part is less than two micrometers.SELECTED DRAWING: Figure 3
+---
+
+### [7] JP-2024014313-A
+- **タイトル:** Heat conductive composition
+- **要約:** To provide a heat conductive composition capable of obtaining a cured product having low viscosity, high thermal conductivity and moderate hardness even when a filler is highly filled into a polymer component.SOLUTION: There is provided a heat conductive composition which comprises: a polymer component (A); a surface-treated filler (B) which is surface-treated with α-butyl-ω-(2-trimethoxysilyl ethyl) polydimethylsiloxane having a weight average molecular weight of 500 to 5000 and in which the adhesion rate of the α-butyl-ω-(2-trimethoxysilyl ethyl) polydimethylsiloxane to the filler is 20.0 to 50.0 mass%; and a silicon-containing oxide-coated nitride (C) having a nitride and a silicon-containing oxide film for coating the nitride.SELECTED DRAWING: None
+---
+
+### [8] JP-2024018784-A
+- **タイトル:** Information processing device, information processing system, information processing method, and program
+- **要約:** To provide an image processing device capable of appropriately detecting signs of failure.SOLUTION: An information processing device 101 disclosed herein comprises an acquisition unit 102 for acquiring state information regarding the state of a detection target device being monitored for failure, a sign detection unit 103 configured to compare the state information and failure information on failure of the detection target device to detect signs of failure, and a transmission unit 104 configured to respond to detection of signs by sending failure sign information regarding the signs to a server.SELECTED DRAWING: Figure 1
+---
+
+### [9] JP-2024021423-A
+- **タイトル:** Molding plan support device, molding plan support method and program
+- **要約:** To create a fine molding plan in which a deviation between the molding plan and an actual shape hardly occurs when laminating a plurality of weld beads.SOLUTION: A molding plan support device 15 comprises: a molding condition acquisition unit 31 which acquires locus information including a target position of a path of forming a weld bead and information on a welding condition of forming the weld bead; a shape prediction unit 33 which obtains a prediction shape in which the plurality of weld beads are laminated on the basis of the locus information and the information on the welding condition; a determination unit 35 which determines whether the target position of an other path excluding the target position of the path of forming the weld bead is included on the inner side of the contour of the prediction shape of any weld bead on a cross section orthogonal to the longitudinal direction of the weld bead; and a locus information change unit 37 which deletes the target position of the other path from the locus information when the target position of the other path is included on the inner side of the contour.SELECTED DRAWING: Figure 2
+---
+
+### [10] JP-2024029351-A
+- **タイトル:** ゲームシステム
+- **要約:** To provide a game capable of determining a final win/loss by effectively utilizing a score acquired by a match.SOLUTION: A game managing device 1 includes: a score acquisition portion 11 for acquiring a score acquired by both teams when a match between two teams ends; a detention score management portion 12 for imparting a detention score determined based on a score difference between games to a team having a larger score; a reception portion 13 for receiving a winning probability that a user desires for a win/loss of a game through a terminal device 2 possessed by the user; a score determination portion 14 for calculating a break-down score to be added to a score acquired for determining a final win/loss from an accumulated detention score and determining a break-down score corresponding to a winning probability when receiving the winning probability from the terminal device 2; and a win/loss determination portion 15 for presenting a total score obtained by adding a determined break-down score to a score acquired by each team to the terminal device 2, and determining a final win/loss by the total score of an own team and the total score of an opponent team.SELECTED DRAWING: Figure 2
+---

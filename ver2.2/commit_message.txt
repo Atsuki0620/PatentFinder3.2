@@ -1,0 +1,9 @@
+feat: Implement features based on UpgradeGuide_to_ver2.2.md
+
+This commit implements the following features as per UpgradeGuide_to_ver2.2.md:
+- A. API Key Configuration: Added UI for API key input and integrated with `utils.config`.
+- B. Automated Research Plan Generation: Modified agent to generate and display research plans.
+- C. 5-Option Proposal & Refinement Prompt: Enhanced dialogue to offer 5 research plan options.
+- D. Improved Cosine Similarity Calculation: Refined similarity scoring using weighted averages of title, abstract, and claims.
+
+The `UpgradeGuide.md` has been renamed to `UpgradeGuide_to_ver2.2.md` to reflect the version.

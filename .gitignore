@@ -1,0 +1,33 @@
+# Environments
+.env*
+.venv
+venv/
+env/
+
+# Secrets
+*.json
+!/src/core/strategies/base.py 
+!/src/core/strategies/default.py
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.ipynb_checkpoints
