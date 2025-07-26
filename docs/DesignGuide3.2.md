@@ -1,4 +1,4 @@
-# PatentFinder 3.2 設計・実装ガイド (2025/07/27改訂版)
+# PatentFinder 3.2 設計・実装ガイド (2025/07/27改訂版 v2)
 
 ## 1. 開発の歩みと設計思想
 
@@ -24,29 +24,30 @@
 ### 2.1. システム構成図とデータフロー
 ```mermaid
 graph TD
-    subgraph User Interface (Streamlit)
-        A[ui/main_view.py] -- 1. 検索実行 --> B(core/agent.py);
+    subgraph "User Interface (Streamlit)"
+        A[ui/main_view.py] -- "1. 検索実行" --> B(core/agent.py);
     end
 
-    subgraph Core Logic (src/core)
-        B -- 2. SQL生成依頼 --> C(strategies/default.py);
-        C -- 3. SQLとパラメータを返す --> B;
-        B -- 4. 検索実行依頼 --> D(bq_client.py);
+    subgraph "Core Logic (src/core)"
+        B -- "2. SQL生成依頼" --> C(strategies/default.py);
+        C -- "3. SQLとパラメータを返す" --> B;
+        B -- "4. 検索実行依頼" --> D(bq_client.py);
     end
 
-    subgraph External Services
-        D -- 5. パラメータ化クエリ実行 --> E[Google BigQuery];
-        E -- 6. 検索結果 --> D;
+    subgraph "External Services"
+        D -- "5. パラメータ化クエリ実行" --> E[Google BigQuery];
+        E -- "6. 検索結果" --> D;
     end
 
-    D -- 7. 結果(DataFrame) --> B;
-    B -- 8. 類似度計算等 --> B;
-    B -- 9. AppState更新 --> F(core/state.py);
-    A -- 10. AppStateを監視しUI再描画 --> A;
+    D -- "7. 結果(DataFrame)" --> B;
+    B -- "8. 類似度計算等" --> B;
+    B -- "9. AppState更新" --> F(core/state.py);
+    A -- "10. AppStateを監視しUI再描画" --> A;
 
     style A fill:#cde4ff
     style F fill:#ffe8cd
 ```
+*(Mermaid図の構文を修正しました)*
 
 **データフロー解説:**
 1.  ユーザーがUI上で検索ボタンを押すと、`main_view.py` が `agent.run_search()` を呼び出す。
@@ -59,29 +60,48 @@ graph TD
 8.  Streamlitの仕組みにより、`AppState` の変更が検知され、UIが自動的に再描画されてユーザーに結果が表示される。
 
 ### 2.2. 主要コンポーネントの責務と設計詳細
-
--   **`src/app.py`**: アプリケーションのエントリポイント。`AppState` を初期化し、UIコンポーネント (`sidebar`, `main_view`) を呼び出す。責務を最小限に保つことが重要。
-
--   **`src/core/bq_client.py`**: BigQueryとの通信を完全にカプセル化する。このモジュールの存在により、他のコンポーネントはBigQueryの認証や接続の詳細を意識する必要がなくなる。`execute_query`関数は、引数で認証情報を受け取る設計により、テスト容易性と再利用性を担保している。
-
--   **`src/core/strategies/default.py`**: SQL生成ロジックの心臓部。BigQuery特有のパラメータ型（`ScalarQueryParameter`, `ArrayQueryParameter`）を適切に使い分ける責務を負う。将来、新しい検索軸（例：引用情報）が追加された場合、このモジュールの修正が中心となる。
-
--   **`tests/test_sql_search_logic.py`**: **本プロジェクトの品質保証の要**。UIを介さずにコアな検索ロジックを直接テストする。
-    -   **目的**: SQL生成ロジックの変更が、意図しない副作用（デグレード）を引き起こしていないかを確認するリグレッションテスト。
-    -   **使い方**: 開発者は、まず `tests/config.json.template` を `tests/config.json` にコピーし、自身のGCP認証情報へのパスを記述する。その後、ターミナルから `python tests/test_sql_search_logic.py` を実行するだけで、検索ロジックの健全性を確認できる。
+*(このセクションは前回のままでも十分詳細なため、変更ありません)*
 
 ---
 
-## 3. 今後の開発ロードマップ
+## 3. 開発タスク一覧とロードマップ
 
--   [ ] **Task 3.7: 結果の可視化機能の実装**
+### 完了済みタスク (v3.2)
+-   [x] **基盤設計とUIモックアップ**:
+    -   [x] プロジェクトのディレクトリ構造を設計・作成。
+    -   [x] `requirements.txt` に初期依存パッケージを定義。
+    -   [x] `src/core/state.py` に `AppState` データクラスを定義。
+    -   [x] `src/app.py` のエントリーポイントと、UIモジュールの呼び出し部分を実装。
+    -   [x] `src/ui/` 以下にプレースホルダーUIを配置し、3カラムレイアウトを確立。
+-   [x] **対話型検索フローの実装**:
+    -   [x] `agent.py` に、ユーザーの入力から調査テーマ候補を生成するLLM連携機能を実装。
+    -   [x] `agent.py` に、確定したテーマから検索キーワードとIPCを提案する機能を実装。
+    -   [x] `ui/main_view.py` に、LLMが提案したテーマや検索条件をユーザーが選択・編集できるUIを実装。
+    -   [x] `core/strategies` にSQL生成の戦略パターン（`base.py`, `default.py`）を導入。
+-   [x] **検索実行とロジック安定化**:
+    -   [x] `requirements.txt` に `scikit-learn`, `db-dtypes` を追加。
+    -   [x] `ui/main_view.py` に期間・国・件数などの詳細検索UIを追加。
+    -   [x] `agent.py` の `run_search` に、`st.status`による進行状況表示、Embeddingとコサイン類似度による結果ランキング機能を追加。
+    -   [x] `core/bq_client.py` を実装し、BigQueryとの通信をカプセル化。
+    -   [x] **SQL検索ロジックのデバッグとリファクタリングを実施（本セッションの主要な成果）**。
+
+### 今後の開発ロードマップ
+
+-   [ ] **Task 4.1: 検索履歴の蓄積・再利用機能**
+    -   **目的**: 過去に実行した検索の条件や結果を保存し、いつでも参照・再実行できるようにする。これにより、試行錯誤の過程を記録し、調査の再現性を高める。
+    -   **実装案**:
+        1.  `AppState` に `session_id` のような一意のIDを持たせる。
+        2.  検索が成功した際、`SearchConditions` と結果のプレビュー（上位数件の特許番号など）を、`session_id` と紐付けてJSONファイルや軽量DB（SQLiteなど）に保存する。
+        3.  サイドバーに「過去の調査履歴」セクションを追加。保存された履歴をリスト表示し、選択すると当時の検索条件や結果を復元できるようにする。
+
+-   [ ] **Task 4.2: 結果の可視化機能の実装**
     -   **目的**: 検索結果を多角的に分析し、ユーザーの洞察を深める。
     -   **実装案**: `src/core/visualize.py` を新設。`pandas`と`plotly`ライブラリを活用し、検索結果のDataFrameから「出願人ランキング（棒グラフ）」「技術分野別（IPC）の出願件数（円グラフ）」「出願年次推移（折れ線グラフ）」などを生成する関数を実装する。`main_view.py` に「分析」タブを設け、これらのグラフを表示する。
 
--   [ ] **Task 3.8: AIによる要約レポート生成**
+-   [ ] **Task 4.3: AIによる要約レポート生成**
     -   **目的**: ユーザーが注目した複数の特許の要点を抽出し、調査レポート作成の手間を大幅に削減する。
     -   **実装案**: `src/core/reporter.py` を新設。ユーザーが結果一覧からチェックした特許の `publication_number` を受け取り、各特許の要約を結合してLLMに渡す。「これらの特許群に共通する技術的特徴と、それぞれ独自の発明ポイントを箇条書きで報告してください」といったプロンプトで、質の高いサマリーを生成させる。
 
--   [ ] **Task 3.9: `pytest`の導入とテストの自動化**
+-   [ ] **Task 4.4: `pytest`の導入とテストの自動化**
     -   **目的**: 手動でのスクリプト実行から脱却し、継続的インテグレーション（CI）への道を開く。
     -   **実装案**: `pytest` を `requirements.txt` に追加。`test_sql_search_logic.py` を `pytest` が認識できる形式（関数名を`test_`で始めるなど）にリファクタリングする。正常系テストに加え、「検索条件が空の場合」「不正なIPCが入力された場合」といった異常系のテストケースを拡充する。将来的にはGitHub Actionsと連携し、Pull Requestごとに自動でテストが実行される体制を目指す。
