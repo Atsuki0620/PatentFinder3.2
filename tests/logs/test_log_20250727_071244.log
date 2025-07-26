@@ -1,0 +1,111 @@
+2025-07-27 07:12:44,512 [INFO] ログファイルを次の場所に作成しました: C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\standalone_tests\logs\test_log_20250727_071244.log
+2025-07-27 07:12:44,513 [INFO] --- テスト開始 ---
+2025-07-27 07:12:44,514 [INFO] 使用する検索条件:
+SearchConditions(subject_keywords=['semiconductor', 'manufacturing'], subject_ipc=['H01L'], predicate_keywords=['defect', 'inspection'], predicate_ipc=[], start_date=None, end_date=None, countries=['US'], limit=15)
+2025-07-27 07:12:44,514 [INFO] --- 生成されたSQL ---
+2025-07-27 07:12:44,514 [INFO] WITH PatentData AS (
+            SELECT
+                publication_number,
+                (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+                (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract,
+                (SELECT STRING_AGG(name) FROM UNNEST(assignee_harmonized)) as assignee,
+                publication_date,
+                ipc, -- IPCをそのまま渡す
+                (SELECT STRING_AGG(code) FROM UNNEST(ipc)) as ipc_codes,
+                CONCAT(
+                    (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1), ' ',
+                    (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)
+                ) as search_text
+            FROM
+                `patents-public-data.patents.publications`
+        )
+        SELECT
+            p.publication_number,
+            p.title,
+            p.abstract,
+            p.assignee,
+            p.publication_date,
+            p.ipc_codes
+        FROM
+            PatentData p
+        WHERE
+  SUBSTR(p.publication_number, 1, 2) IN UNNEST(@countries)
+  AND ((LOWER(p.search_text) LIKE @s_kw_0 OR LOWER(p.search_text) LIKE @s_kw_1) AND (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @s_ipc_2)))
+  AND ((LOWER(p.search_text) LIKE @p_kw_3 OR LOWER(p.search_text) LIKE @p_kw_4))
+        LIMIT @limit
+2025-07-27 07:12:44,514 [INFO] --- SQLパラメータ ---
+2025-07-27 07:12:44,514 [INFO] {
+  "countries": {
+    "type": "STRING",
+    "value": [
+      "US"
+    ]
+  },
+  "s_kw_0": {
+    "type": "STRING",
+    "value": "%manufacturing%"
+  },
+  "s_kw_1": {
+    "type": "STRING",
+    "value": "%semiconductor%"
+  },
+  "s_ipc_2": {
+    "type": "STRING",
+    "value": "H01L%"
+  },
+  "p_kw_3": {
+    "type": "STRING",
+    "value": "%inspection%"
+  },
+  "p_kw_4": {
+    "type": "STRING",
+    "value": "%defect%"
+  },
+  "limit": {
+    "type": "INT64",
+    "value": 15
+  }
+}
+2025-07-27 07:12:44,514 [INFO] --- BigQuery検索開始 ---
+2025-07-27 07:12:46,204 [ERROR] BigQueryの検索中にエラーが発生しました.
+Traceback (most recent call last):
+  File "C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\src\core\bq_client.py", line 44, in execute_query
+    results = query_job.result()
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\cloud\bigquery\job\query.py", line 1696, in result
+    while not is_job_done():
+              ~~~~~~~~~~~^^
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\api_core\retry\retry_unary.py", line 294, in retry_wrapped_func
+    return retry_target(
+        target,
+    ...<3 lines>...
+        on_error=on_error,
+    )
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\api_core\retry\retry_unary.py", line 156, in retry_target
+    next_sleep = _retry_error_helper(
+        exc,
+    ...<6 lines>...
+        timeout,
+    )
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\api_core\retry\retry_base.py", line 214, in _retry_error_helper
+    raise final_exc from source_exc
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\api_core\retry\retry_unary.py", line 147, in retry_target
+    result = target()
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\cloud\bigquery\job\query.py", line 1645, in is_job_done
+    raise job_failed_exception
+google.api_core.exceptions.BadRequest: 400 Second argument of IN UNNEST must be an array but was STRING at [27:38]; reason: invalidQuery, location: query, message: Second argument of IN UNNEST must be an array but was STRING at [27:38]
+
+Location: US
+Job ID: aa30c83a-8f6f-40ee-ba0b-4298061280c0
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\standalone_tests\test_runner.py", line 109, in main
+    results_df = bq_client.execute_query(sql, params, credentials_info=gcp_credentials)
+  File "C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\src\core\bq_client.py", line 49, in execute_query
+    raise BQClientError(f"BigQueryのクエリエラーが発生しました。SQLの構文を確認してください。\n--- Details---\n{error_details}") from e
+src.core.bq_client.BQClientError: BigQueryのクエリエラーが発生しました。SQLの構文を確認してください。
+--- Details---
+Second argument of IN UNNEST must be an array but was STRING at [27:38]
+2025-07-27 07:12:46,276 [INFO] --- テスト終了 ---

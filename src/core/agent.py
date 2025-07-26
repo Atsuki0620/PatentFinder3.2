@@ -164,11 +164,6 @@ def run_search(app_state: AppState) -> AppState:
             status.update(label=f"BigQueryで最大{app_state.search_conditions.limit}件の特許を検索中...")
             results_df = bq_client.execute_query(sql, params)
             
-            if results_df is None:
-                app_state.error_message = "BigQueryでの検索に失敗しました。UIに表示された詳細なエラーメッセージを確認してください。"
-                status.update(label="BigQuery検索エラー", state="error")
-                return app_state
-
             if results_df.empty:
                 status.update(label="検索結果が0件でした。", state="complete")
                 app_state.search_results = pd.DataFrame()
@@ -193,6 +188,11 @@ def run_search(app_state: AppState) -> AppState:
             status.update(label="検索完了！", state="complete")
             ai_response = f"検索が完了し、調査方針との類似度が高い順に{len(results_df)}件の特許をランキングしました。"
             app_state.chat_history.append(("assistant", ai_response))
+
+        except bq_client.BQClientError as e:
+            app_state.error_message = f"BigQuery検索エラー: {e}"
+            st.error(app_state.error_message)
+            status.update(label="BigQuery検索エラー", state="error")
         
         except Exception as e:
             app_state.error_message = f"検索処理中に予期せぬエラーが発生しました: {e}"

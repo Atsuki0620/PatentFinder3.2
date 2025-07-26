@@ -1,0 +1,4 @@
+{
+  "openai_api_key": "YOUR_OPENAI_API_KEY",
+  "gcp_service_account_path": "path/to/your/service_account.json"
+}

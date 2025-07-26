@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Tuple
-from core.state import SearchConditions
+from ..state import SearchConditions
 
 class BaseStrategy(ABC):
     """

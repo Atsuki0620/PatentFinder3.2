@@ -1,0 +1,99 @@
+2025-07-27 07:15:50,636 [INFO] ログファイルを次の場所に作成しました: C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\standalone_tests\logs\test_log_20250727_071550.log
+2025-07-27 07:15:50,637 [INFO] --- テスト開始 ---
+2025-07-27 07:15:50,637 [INFO] 使用する検索条件:
+SearchConditions(subject_keywords=['semiconductor', 'manufacturing'], subject_ipc=['H01L'], predicate_keywords=['defect', 'inspection'], predicate_ipc=[], start_date=None, end_date=None, countries=['US', 'JP'], limit=20)
+2025-07-27 07:15:50,638 [INFO] --- 生成されたSQL ---
+2025-07-27 07:15:50,638 [INFO] WITH PatentData AS (
+            SELECT
+                publication_number,
+                (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+                (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract,
+                (SELECT STRING_AGG(name) FROM UNNEST(assignee_harmonized)) as assignee,
+                publication_date,
+                ipc, -- IPCをそのまま渡す
+                (SELECT STRING_AGG(code) FROM UNNEST(ipc)) as ipc_codes,
+                CONCAT(
+                    (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1), ' ',
+                    (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)
+                ) as search_text
+            FROM
+                `patents-public-data.patents.publications`
+        )
+        SELECT
+            p.publication_number,
+            p.title,
+            p.abstract,
+            p.assignee,
+            p.publication_date,
+            p.ipc_codes
+        FROM
+            PatentData p
+        WHERE
+  SUBSTR(p.publication_number, 1, 2) IN UNNEST(@countries)
+  AND ((LOWER(p.search_text) LIKE @s_kw_0 OR LOWER(p.search_text) LIKE @s_kw_1) AND (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @s_ipc_2)))
+  AND ((LOWER(p.search_text) LIKE @p_kw_3 OR LOWER(p.search_text) LIKE @p_kw_4))
+        LIMIT @limit
+2025-07-27 07:15:50,638 [INFO] --- SQLパラメータ ---
+2025-07-27 07:15:50,638 [INFO] {
+  "countries": {
+    "type": "ARRAY<STRING>",
+    "value": [
+      "US",
+      "JP"
+    ]
+  },
+  "s_kw_0": {
+    "type": "STRING",
+    "value": "%semiconductor%"
+  },
+  "s_kw_1": {
+    "type": "STRING",
+    "value": "%manufacturing%"
+  },
+  "s_ipc_2": {
+    "type": "STRING",
+    "value": "H01L%"
+  },
+  "p_kw_3": {
+    "type": "STRING",
+    "value": "%inspection%"
+  },
+  "p_kw_4": {
+    "type": "STRING",
+    "value": "%defect%"
+  },
+  "limit": {
+    "type": "INT64",
+    "value": 20
+  }
+}
+2025-07-27 07:15:50,638 [INFO] --- BigQuery検索開始 ---
+2025-07-27 07:15:53,392 [ERROR] BigQueryの検索中にエラーが発生しました。
+Traceback (most recent call last):
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\cloud\bigquery\_pandas_helpers.py", line 59, in <module>
+    import db_dtypes  # type: ignore
+    ^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'db_dtypes'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\src\core\bq_client.py", line 45, in execute_query
+    return results.to_dataframe()
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\cloud\bigquery\table.py", line 2553, in to_dataframe
+    _pandas_helpers.verify_pandas_imports()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\atsuk\AppData\Roaming\Python\Python313\site-packages\google\cloud\bigquery\_pandas_helpers.py", line 1122, in verify_pandas_imports
+    raise ValueError(_NO_DB_TYPES_ERROR) from db_dtypes_import_exception
+ValueError: Please install the 'db-dtypes' package to use this function.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\standalone_tests\test_runner.py", line 111, in main
+    results_df = bq_client.execute_query(sql, params, credentials_info=gcp_credentials)
+  File "C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\src\core\bq_client.py", line 51, in execute_query
+    raise BQClientError(f"BigQueryの実行中に予期せぬエラーが発生しました: {e}") from e
+src.core.bq_client.BQClientError: BigQueryの実行中に予期せぬエラーが発生しました: Please install the 'db-dtypes' package to use this function.
+2025-07-27 07:15:53,438 [INFO] --- テスト終了 ---

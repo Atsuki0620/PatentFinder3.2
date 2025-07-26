@@ -1,74 +1,87 @@
-# PatentFinder 3.2 設計・実装ガイド
+# PatentFinder 3.2 設計・実装ガイド (2025/07/27改訂版)
 
-## 1. 開発目標
-v3.1の検索ロジックの知見を活かし、UI/UXを刷新した拡張性の高いWebアプリケーションを完成させる。
+## 1. 開発の歩みと設計思想
 
-## 2. ディレクトリ構造
+### 1.1. プロジェクトの黎明期と課題
+本プロジェクトは、v3.1で実現したコマンドラインベースの高度な特許検索能力を、より多くのユーザーが直感的に利用できるWebアプリケーションへと昇華させることを目的に始動した。
+
+開発初期段階では、Streamlitの迅速なプロトタイピング能力を最大限に活用し、UIとビジネスロジックを一体的に実装した。しかし、このアプローチはすぐに壁に突き当たることになる。BigQueryへの検索クエリが複雑化するにつれ、UI上では追跡しきれないSQLエラーが頻発。エラーメッセージはStreamlitの実行プロセスに隠蔽されがちで、根本原因の特定にはUIを介した時間のかかる手動テストを繰り返す必要があった。
+
+### 1.2. 設計思想の転換：テスト駆動開発へのシフト
+この経験から、我々は**「UIとロジックの完全な分離」**という設計原則に立ち返った。そして、この原則を具現化するため、以下の重要な決断を下した。
+
+1.  **単体テスト環境の構築**: `tests/` ディレクトリに、UIから完全に独立してSQL検索ロジックを実行できるテストスクリプト (`test_sql_search_logic.py`) を整備した。これにより、開発者はUIの動作を待つことなく、コアロジックの変更を即座に検証できるようになった。
+2.  **ロジックの抽象化と再利用性の向上**: `src/core/bq_client.py` を改修し、Streamlitのセッション情報 (`st.session_state`) への依存を解消。認証情報を引数として外部から注入できるようにしたことで、テストスクリプトとStreamlitアプリの両方から同じロジックを再利用できるようになった。
+3.  **構造化されたエラーハンドリング**: `bq_client.py` がエラー発生時に汎用的な `Exception` ではなく、詳細情報を含むカスタム例外 `BQClientError` を送出するように変更。これにより、呼び出し元（UIやテスト）はエラーの種類を判別し、より的確な対応（ユーザーへの通知やロギング）を行えるようになった。
+
+### 1.3. 辿り着いた安定性
+この新しい開発アプローチは、直面していた問題を的確に解決に導いた。テストスクリプト上での集中的なデバッグサイクルを通じて、SQLパラメータの型指定誤り (`IN UNNEST`句) や、依存パッケージ不足 (`db-dtypes`) といった複数の問題を迅速に特定・修正。結果として、検索ロジックは大幅に堅牢性を増し、現在の安定したアプリケーションの基盤が築かれた。この一連の経験は、今後の機能追加においても「まずテストを書く」という文化をチームに根付かせる貴重な教訓となった。
+
+---
+
+## 2. アーキテクチャ詳解
+
+### 2.1. システム構成図とデータフロー
+```mermaid
+graph TD
+    subgraph User Interface (Streamlit)
+        A[ui/main_view.py] -- 1. 検索実行 --> B(core/agent.py);
+    end
+
+    subgraph Core Logic (src/core)
+        B -- 2. SQL生成依頼 --> C(strategies/default.py);
+        C -- 3. SQLとパラメータを返す --> B;
+        B -- 4. 検索実行依頼 --> D(bq_client.py);
+    end
+
+    subgraph External Services
+        D -- 5. パラメータ化クエリ実行 --> E[Google BigQuery];
+        E -- 6. 検索結果 --> D;
+    end
+
+    D -- 7. 結果(DataFrame) --> B;
+    B -- 8. 類似度計算等 --> B;
+    B -- 9. AppState更新 --> F(core/state.py);
+    A -- 10. AppStateを監視しUI再描画 --> A;
+
+    style A fill:#cde4ff
+    style F fill:#ffe8cd
 ```
-.
-├── .streamlit/
-│   └── config.toml
-├── docs/
-│   ├── DesignGuide3.2.md
-│   ├── GEMINI.md
-│   └── history.md
-├── src/
-│   ├── app.py
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── agent.py
-│   │   ├── bq_client.py
-│   │   ├── state.py
-│   │   └── strategies/
-│   │       ├── __init__.py
-│   │       ├── base.py
-│   │       └── default.py
-│   ├── ui/
-│   │   ├── __init__.py
-│   │   ├── sidebar.py
-│   │   └── main_view.py
-│   └── utils/
-│       ├── __init__.py
-│       └── config.py
-├── outputs/
-│   └── .gitkeep
-├── tests/
-│   └── .gitkeep
-├── .env
-├── .gitignore
-├── requirements.txt
-└── README.md
-```
 
-## 3. 開発フェーズとタスク
+**データフロー解説:**
+1.  ユーザーがUI上で検索ボタンを押すと、`main_view.py` が `agent.run_search()` を呼び出す。
+2.  `agent` は `SubjectPredicateStrategy` を利用して、現在の検索条件からSQLクエリとパラメータリストを生成する。
+3.  `agent` は生成されたSQLとパラメータ、そして認証情報を `bq_client.execute_query()` に渡す。
+4.  `bq_client` は受け取った情報でBigQueryに接続し、安全なパラメータ化クエリを実行する。
+5.  `bq_client` はBigQueryからの結果をPandas DataFrameに変換して `agent` に返す。
+6.  `agent` はDataFrameを受け取り、調査テーマとの類似度計算など、追加の処理を行う。
+7.  最終的な結果は `state.AppState` オブジェクトに格納される。
+8.  Streamlitの仕組みにより、`AppState` の変更が検知され、UIが自動的に再描画されてユーザーに結果が表示される。
 
-### フェーズ1: 基盤設計とUIモックアップ
+### 2.2. 主要コンポーネントの責務と設計詳細
 
--   [ ] **Task 1.1**: 上記ディレクトリ構造を実際にファイルシステム上に作成する。
--   [ ] **Task 1.2**: `requirements.txt` に `streamlit`, `openai`, `google-cloud-bigquery`, `pandas`, `plotly` を記述する。
--   [ ] **Task 1.3**: `src/core/state.py` に `AppState` データクラスを定義する。最低限、`chat_history`, `search_conditions`, `search_results` などの属性を持たせる。
--   [ ] **Task 1.4**: `src/app.py` の骨格を作成。`AppState` を初期化し、`src/ui/sidebar.py` と `src/ui/main_view.py` を呼び出すだけのシンプルな構成にする。
--   [ ] **Task 1.5**: `src/ui/` 以下に、表示のみを行うプレースホルダー的なUIコンポーネントを作成し、3カラムレイアウトが機能することを確認する。
+-   **`src/app.py`**: アプリケーションのエントリポイント。`AppState` を初期化し、UIコンポーネント (`sidebar`, `main_view`) を呼び出す。責務を最小限に保つことが重要。
 
-### フェーズ2: 対話型検索フローの実装
+-   **`src/core/bq_client.py`**: BigQueryとの通信を完全にカプセル化する。このモジュールの存在により、他のコンポーネントはBigQueryの認証や接続の詳細を意識する必要がなくなる。`execute_query`関数は、引数で認証情報を受け取る設計により、テスト容易性と再利用性を担保している。
 
--   [ ] **Task 2.1**: `src/core/agent.py` に `extract_subject_predicate(user_query)` 関数を実装する。内部でLLMを呼び出し、ユーザーの初回入力から「主語」と「述語」をJSON形式で抽出する。
--   [ ] **Task 2.2**: `agent.py` に `suggest_terms(subject, predicate)` 関数を実装する。主語・述語に基づき、関連キーワードとIPC分類をLLMに提案させる。
--   [ ] **Task 2.3**: `src/ui/main_view.py` を更新し、ユーザーが入力したクエリを `agent` に渡し、返ってきたキーワード・IPC候補をチェックボックスで表示・選択できるようにする。
--   [ ] **Task 2.4**: `src/core/strategies/base.py` に `BaseStrategy` 抽象クラスを定義し、`generate_sql(conditions)` メソッドを持たせる。
--   [ ] **Task 2.5**: `src/core/strategies/default.py` に `SubjectPredicateStrategy` クラスを実装し、v3.1で実績のある `WHERE (主語) AND (述語)` 形式のパラメータ化SQLクエリを生成するロジックを記述する。
+-   **`src/core/strategies/default.py`**: SQL生成ロジックの心臓部。BigQuery特有のパラメータ型（`ScalarQueryParameter`, `ArrayQueryParameter`）を適切に使い分ける責務を負う。将来、新しい検索軸（例：引用情報）が追加された場合、このモジュールの修正が中心となる。
 
-### フェーズ3: 検索実行と結果の可視化
+-   **`tests/test_sql_search_logic.py`**: **本プロジェクトの品質保証の要**。UIを介さずにコアな検索ロジックを直接テストする。
+    -   **目的**: SQL生成ロジックの変更が、意図しない副作用（デグレード）を引き起こしていないかを確認するリグレッションテスト。
+    -   **使い方**: 開発者は、まず `tests/config.json.template` を `tests/config.json` にコピーし、自身のGCP認証情報へのパスを記述する。その後、ターミナルから `python tests/test_sql_search_logic.py` を実行するだけで、検索ロジックの健全性を確認できる。
 
--   [ ] **Task 3.1**: `requirements.txt` に `scikit-learn` を追加する（類似度計算のため）。
--   [ ] **Task 3.2**: `src/core/state.py` の `SearchConditions` に `start_date`, `end_date`, `countries`, `limit` 属性を追加する。
--   [ ] **Task 3.3**: `src/ui/main_view.py` に、期間・国・件数を指定するためのUIコンポーネントを追加し、`AppState` と連携させる。SQL表示を `st.expander` に変更する。
--   [ ] **Task 3.4**: `src/core/strategies/default.py` の `generate_sql` を修正し、期間・国・件数の条件をSQLクエリに反映させる。また、SQLをインデント付きで整形する。
--   [ ] **Task 3.5**: `src/core/agent.py` の `run_search` ワークフローを大幅に改修する。
-    -   `st.status` を用いて、処理の進行状況を段階的に表示する。
-    -   日本語キーワードを英語に翻訳するステップを追加する。
-    -   BigQuery検索後、結果（タイトル・要約）と調査方針をEmbedding化する。
-    -   コサイン類似度を計算し、結果をランキングソートする。
--   [ ] **Task 3.6**: `src/core/bq_client.py` を実装し、BigQueryへの接続とクエリ実行をカプセル化する。
--   [ ] **Task 3.7**: （TBD）`src/core/visualize.py` を作成し、DataFrameから出願年次推移グラフなどを生成する関数を実装する。
--   [ ] **Task 3.8**: （TBD）`src/core/reporter.py` を作成し、選択された特許の要約をLLMに依頼する関数を実装する。
+---
+
+## 3. 今後の開発ロードマップ
+
+-   [ ] **Task 3.7: 結果の可視化機能の実装**
+    -   **目的**: 検索結果を多角的に分析し、ユーザーの洞察を深める。
+    -   **実装案**: `src/core/visualize.py` を新設。`pandas`と`plotly`ライブラリを活用し、検索結果のDataFrameから「出願人ランキング（棒グラフ）」「技術分野別（IPC）の出願件数（円グラフ）」「出願年次推移（折れ線グラフ）」などを生成する関数を実装する。`main_view.py` に「分析」タブを設け、これらのグラフを表示する。
+
+-   [ ] **Task 3.8: AIによる要約レポート生成**
+    -   **目的**: ユーザーが注目した複数の特許の要点を抽出し、調査レポート作成の手間を大幅に削減する。
+    -   **実装案**: `src/core/reporter.py` を新設。ユーザーが結果一覧からチェックした特許の `publication_number` を受け取り、各特許の要約を結合してLLMに渡す。「これらの特許群に共通する技術的特徴と、それぞれ独自の発明ポイントを箇条書きで報告してください」といったプロンプトで、質の高いサマリーを生成させる。
+
+-   [ ] **Task 3.9: `pytest`の導入とテストの自動化**
+    -   **目的**: 手動でのスクリプト実行から脱却し、継続的インテグレーション（CI）への道を開く。
+    -   **実装案**: `pytest` を `requirements.txt` に追加。`test_sql_search_logic.py` を `pytest` が認識できる形式（関数名を`test_`で始めるなど）にリファクタリングする。正常系テストに加え、「検索条件が空の場合」「不正なIPCが入力された場合」といった異常系のテストケースを拡充する。将来的にはGitHub Actionsと連携し、Pull Requestごとに自動でテストが実行される体制を目指す。

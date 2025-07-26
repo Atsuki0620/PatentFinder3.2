@@ -1,8 +1,8 @@
 from typing import Tuple
-from google.cloud.bigquery import ScalarQueryParameter
+from google.cloud.bigquery import ScalarQueryParameter, ArrayQueryParameter
 import textwrap
 from .base import BaseStrategy
-from core.state import SearchConditions
+from ..state import SearchConditions
 
 class SubjectPredicateStrategy(BaseStrategy):
     """
@@ -23,7 +23,7 @@ class SubjectPredicateStrategy(BaseStrategy):
             ])
         if conditions.countries:
             where_clauses.append("SUBSTR(p.publication_number, 1, 2) IN UNNEST(@countries)")
-            query_params.append(ScalarQueryParameter("countries", "STRING", conditions.countries))
+            query_params.append(ArrayQueryParameter("countries", "STRING", conditions.countries))
 
         # --- 主語 (ANDで結合) ---
         subject_parts = []
