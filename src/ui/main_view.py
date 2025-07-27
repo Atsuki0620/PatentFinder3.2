@@ -1,6 +1,6 @@
 import streamlit as st
 from core.state import AppState
-from core import agent
+from core import agent, visualize
 from datetime import date, timedelta
 import pandas as pd
 
@@ -71,12 +71,10 @@ def show(app_state: AppState):
                 st.session_state.app_state = agent.run_search(app_state)
                 st.rerun()
 
-    # (略)
     # --- 右カラム: 結果と分析 ---
     with col3:
         st.header("3. 結果と分析")
         
-        # エラーメッセージがあれば、タブの外に表示して目立たせる
         if app_state.error_message:
             st.error(app_state.error_message)
 
@@ -85,13 +83,16 @@ def show(app_state: AppState):
             if not app_state.search_results.empty:
                 display_df = app_state.search_results.copy()
                 if 'similarity' in display_df.columns:
-                    # 類似度スコアを見やすいパーセント表示にフォーマット
                     display_df['similarity'] = display_df['similarity'].map(lambda x: f"{x:.1%}")
                 st.dataframe(display_df)
             else:
                 st.info("まだ検索は実行されていません。")
         with tab2:
-            st.write("ここに分析グラフが表示されます。")
+            if not app_state.search_results.empty:
+                st.plotly_chart(visualize.plot_publication_trend(app_state.search_results), use_container_width=True)
+                st.plotly_chart(visualize.plot_assignee_ranking(app_state.search_results), use_container_width=True)
+            else:
+                st.info("グラフを表示するには、まず検索を実行してください。")
         with tab3:
             st.text_area("生成されたレポート", "ここにAIによるサマリーが表示されます。", height=300)
             st.download_button("レポートをダウンロード", "dummy text", "report.md")

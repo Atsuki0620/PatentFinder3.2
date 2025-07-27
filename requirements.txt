@@ -3,4 +3,5 @@ openai
 google-cloud-bigquery
 pandas
 plotly
-scikit-learndb-dtypes
+scikit-learn
+db-dtypes
