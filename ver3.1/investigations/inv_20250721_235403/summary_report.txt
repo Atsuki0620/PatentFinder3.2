@@ -1,0 +1,60 @@
+# 特許調査レポート (v2 - 高精度版)
+
+## 1. 調査テーマ
+逆浸透膜における機械学習を用いた運転最適化
+
+## 2. 検索条件
+
+### 2.1. キーワード
+- **選定キーワード:**
+{
+  "逆浸透膜技術": [
+    "逆浸透膜",
+    "RO膜",
+    "海水淡水化"
+  ],
+  "AI・機械学習": [
+    "機械学習",
+    "AI",
+    "予測モデル",
+    "最適化アルゴリズム"
+  ],
+  "最適化・効率化": [
+    "運転最適化",
+    "効率化",
+    "省エネルギー",
+    "ファウリング"
+  ]
+}
+- **選定理由:**
+調査テーマの3つの核心的要素（逆浸透膜、機械学習、最適化）について、最も代表的な同義語・関連語を選択。広範すぎる用語は除外し、検索の精度を高めることを意図した。
+
+### 2.2. 特許分類 (CPC)
+- **選定分類:**
+[
+  "B01D61/02",
+  "G05B13/02",
+  "C02F1/44"
+]
+- **選定理由:**
+ハードウェア（B01D, C02F）と制御ソフトウェア（G05B）の両側面をカバーする特許分類を選択し、多角的な検索を目指した。
+
+## 3. 実行されたSQLクエリ
+```sql
+
+    SELECT
+        p.publication_number,
+        (SELECT text FROM UNNEST(p.title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+        (SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract
+    FROM
+        `patents-public-data.patents.publications` AS p
+    WHERE (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_0) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_1) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_2)) AND (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_0 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_1 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_2) AND (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_3 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_4 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_5 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_6) AND (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_7 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_8 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_9 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_10)
+    LIMIT 5
+    
+```
+
+## 4. 検索結果
+指定された条件に一致する特許は見つかりませんでした。
+
+## 5. LLMによる評価
+検索結果が0件でした。検索条件が厳しすぎた可能性がありますが、これは高精度な検索では起こり得ることです。

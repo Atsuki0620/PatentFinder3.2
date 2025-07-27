@@ -1,0 +1,42 @@
+2025-07-27 07:11:35,263 [INFO] ログファイルを次の場所に作成しました: C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\standalone_tests\logs\test_log_20250727_071135.log
+2025-07-27 07:11:35,266 [INFO] --- テスト開始 ---
+2025-07-27 07:11:35,266 [INFO] 使用する検索条件:
+SearchConditions(subject_keywords=['semiconductor', 'manufacturing'], subject_ipc=['H01L'], predicate_keywords=['defect', 'inspection'], predicate_ipc=[], start_date=None, end_date=None, countries=['US'], limit=15)
+2025-07-27 07:11:35,267 [INFO] --- 生成されたSQL ---
+2025-07-27 07:11:35,267 [INFO] WITH PatentData AS (
+            SELECT
+                publication_number,
+                (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+                (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract,
+                (SELECT STRING_AGG(name) FROM UNNEST(assignee_harmonized)) as assignee,
+                publication_date,
+                ipc, -- IPCをそのまま渡す
+                (SELECT STRING_AGG(code) FROM UNNEST(ipc)) as ipc_codes,
+                CONCAT(
+                    (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1), ' ',
+                    (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)
+                ) as search_text
+            FROM
+                `patents-public-data.patents.publications`
+        )
+        SELECT
+            p.publication_number,
+            p.title,
+            p.abstract,
+            p.assignee,
+            p.publication_date,
+            p.ipc_codes
+        FROM
+            PatentData p
+        WHERE
+  SUBSTR(p.publication_number, 1, 2) IN UNNEST(@countries)
+  AND ((LOWER(p.search_text) LIKE @s_kw_0 OR LOWER(p.search_text) LIKE @s_kw_1) AND (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @s_ipc_2)))
+  AND ((LOWER(p.search_text) LIKE @p_kw_3 OR LOWER(p.search_text) LIKE @p_kw_4))
+        LIMIT @limit
+2025-07-27 07:11:35,267 [INFO] --- SQLパラメータ ---
+2025-07-27 07:11:35,267 [ERROR] SQLの生成中にエラーが発生しました: 'ScalarQueryParameter' object has no attribute 'type'
+Traceback (most recent call last):
+  File "C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\standalone_tests\test_runner.py", line 100, in main
+    param_info = {p.name: {'type': p.type, 'value': p.value} for p in params}
+                                   ^^^^^^
+AttributeError: 'ScalarQueryParameter' object has no attribute 'type'. Did you mean: 'type_'?

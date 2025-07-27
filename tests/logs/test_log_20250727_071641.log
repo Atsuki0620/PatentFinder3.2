@@ -1,0 +1,81 @@
+2025-07-27 07:16:41,556 [INFO] ログファイルを次の場所に作成しました: C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\standalone_tests\logs\test_log_20250727_071641.log
+2025-07-27 07:16:41,558 [INFO] --- テスト開始 ---
+2025-07-27 07:16:41,558 [INFO] 使用する検索条件:
+SearchConditions(subject_keywords=['semiconductor', 'manufacturing'], subject_ipc=['H01L'], predicate_keywords=['defect', 'inspection'], predicate_ipc=[], start_date=None, end_date=None, countries=['US', 'JP'], limit=20)
+2025-07-27 07:16:41,558 [INFO] --- 生成されたSQL ---
+2025-07-27 07:16:41,558 [INFO] WITH PatentData AS (
+            SELECT
+                publication_number,
+                (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+                (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract,
+                (SELECT STRING_AGG(name) FROM UNNEST(assignee_harmonized)) as assignee,
+                publication_date,
+                ipc, -- IPCをそのまま渡す
+                (SELECT STRING_AGG(code) FROM UNNEST(ipc)) as ipc_codes,
+                CONCAT(
+                    (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1), ' ',
+                    (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)
+                ) as search_text
+            FROM
+                `patents-public-data.patents.publications`
+        )
+        SELECT
+            p.publication_number,
+            p.title,
+            p.abstract,
+            p.assignee,
+            p.publication_date,
+            p.ipc_codes
+        FROM
+            PatentData p
+        WHERE
+  SUBSTR(p.publication_number, 1, 2) IN UNNEST(@countries)
+  AND ((LOWER(p.search_text) LIKE @s_kw_0 OR LOWER(p.search_text) LIKE @s_kw_1) AND (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @s_ipc_2)))
+  AND ((LOWER(p.search_text) LIKE @p_kw_3 OR LOWER(p.search_text) LIKE @p_kw_4))
+        LIMIT @limit
+2025-07-27 07:16:41,559 [INFO] --- SQLパラメータ ---
+2025-07-27 07:16:41,559 [INFO] {
+  "countries": {
+    "type": "ARRAY<STRING>",
+    "value": [
+      "US",
+      "JP"
+    ]
+  },
+  "s_kw_0": {
+    "type": "STRING",
+    "value": "%manufacturing%"
+  },
+  "s_kw_1": {
+    "type": "STRING",
+    "value": "%semiconductor%"
+  },
+  "s_ipc_2": {
+    "type": "STRING",
+    "value": "H01L%"
+  },
+  "p_kw_3": {
+    "type": "STRING",
+    "value": "%inspection%"
+  },
+  "p_kw_4": {
+    "type": "STRING",
+    "value": "%defect%"
+  },
+  "limit": {
+    "type": "INT64",
+    "value": 20
+  }
+}
+2025-07-27 07:16:41,559 [INFO] --- BigQuery検索開始 ---
+2025-07-27 07:16:44,547 [INFO] --- 検索成功 ---
+2025-07-27 07:16:44,547 [INFO] 20件の特許が見つかりました。
+2025-07-27 07:16:44,547 [INFO] --- 結果のプレビュー (先頭5件) ---
+2025-07-27 07:16:44,556 [INFO] 
+  publication_number                                                                                                                                title                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      abstract                  assignee  publication_date                                                                                                            ipc_codes
+0   US-2015126035-A1                                                                         Novel Mask Removal Process Strategy for Vertical NAND Device                                           A method for removing a doped amorphous carbon mask from a semiconductor substrate is disclosed. The method comprises generating a plasma to be used in treating the substrate, wherein the plasma comprises an oxygen containing gas, a halogen containing gas, and a hydrogen containing gas; and treating the substrate by exposing the substrate to the plasma. The doped amorphous carbon mask can be a boron doped amorphous carbon mask or a nitrogen doped amorphous carbon mask. The method can result in a mask removal rate ranging from about 1,000 Ångströms/minute to about 12,000 Ångströms/minute. Further, gases can be applied to the substrate before plasma treatment, after plasma treatment, or both to reduce the amount of defects or pinholes found in the substrate film.          MATTSON TECH INC          20150507                                                                            H01L21/311,H01L21/033,H10B69/00,H10B41/35
+1    JP-2008164486-A  Method of manufacturing semiconductor integrated circuit device, and method of manufacturing thin-film probe sheet used in the same     &lt;P&gt;PROBLEM TO BE SOLVED: To prevent damages to a prober and a wafer to be inspected, when performing probe inspection using the prober (thin-film probe), having a probe formed by the manufacturing techniques for semiconductor integrated circuit devices.  &lt;P&gt;SOLUTION: In the major surface of the wafer 31, a copper film 37 is selectively deposited in a region (including a hole 33) where a metal film 21A is formed, and in a region outside an adhesive ring, when a probe card is assembled, and the metal film 21A, a polyimide film 22, a wiring 23, a polyimide film 25, a wiring 27, a polyimide film 28, and so forth are then formed. Thereafter, the wafer 31 and the copper film 37 are removed, thereby obtaining the probe 7 whose height is fully secured.  &lt;P&gt;COPYRIGHT: (C)2008,JPO&amp;INPIT         RENESAS TECH CORP          20080717                                                                                                  G01R1/073,H01L21/66
+2   US-2019295877-A1                                                                              Method of debonding work-carrier pair with thin devices  Disclosed is a thin subject assisted debonding method for separating temporarily bonded workpiece-carrier pair. The thin subject can be a thin wire, or thin filament, or thin blade. The thin subject can be applied between the workpiece and carrier pair in association with laser debonding or mechanical debonding to provide well controlled and targeted wedging function to the delaminating temporary adhesive and its adjacent substrate to which it is separating from. The workpiece can be a semiconductor wafer that has been thinned and processed, and the carrier can be a semiconductor non-device wafer or any other rigid substrate such as a glass wafer or panel. The application of a thin subject between the workpiece and carrier during debonding provides the advantage of high throughput and low defect rate.   DIDREW TECH BVI LIMITED          20190926                                                                                                           H01L21/683
+3   US-2019348335-A1                                                                                       Method of manufacturing a semiconductor device                                                                                                       Reliability of a semiconductor device is improved. A method of manufacturing a semiconductor device includes a step of preparing a lead frame in which a plurality of device forming regions are arranged in a matrix, a die bonding step of mounting a semiconductor chip on each device region, a resin sealing step of individually covering each semiconductor chip with a sealing body, and a lead plating step of plating an outer portion of a lead exposed from the sealing body. Between the resin sealing step and the lead plating step, an inspection step for detecting defective products in the resin sealing step and a defective product removal step for removing a device region of defective products are provided.  RENESAS ELECTRONICS CORP          20191114                                                                  H01L23/08,H01L23/495,H01L23/29,H01L23/532,G01R31/28
+4   US-2018083000-A1                                                                                           Fin epitaxy with lattice strain relaxation                                                                                                                                                                                                                                                                                                                                                                                                                                                  A semiconductor having a first lattice constant is deposited on an exposed sidewall of a relatively small group IV semiconductor substrate fin having a second lattice constant that does not equal the first lattice constant to form a semiconductor fin without any crystal defects resulting from a lattice mismatch between the first lattice constant and the second lattice constant.              QUALCOMM INC          20180322  H01L21/762,H01L29/20,H01L21/306,H01L27/088,H01L29/06,H01L21/3065,H01L29/16,H01L29/10,H01L29/78,H01L21/265,H01L29/66
+2025-07-27 07:16:44,574 [INFO] --- テスト終了 ---

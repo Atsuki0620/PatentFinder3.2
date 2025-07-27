@@ -1,0 +1,81 @@
+2025-07-27 21:52:08,191 [INFO] ログファイルを次の場所に作成しました: C:\Users\atsuk\OneDrive\ドキュメント\GeminiCLI\2507 PatesntFinder3.2\tests\logs\test_log_20250727_215208.log
+2025-07-27 21:52:08,218 [INFO] --- テスト開始 ---
+2025-07-27 21:52:08,219 [INFO] 使用する検索条件:
+SearchConditions(subject_keywords=['semiconductor', 'manufacturing'], subject_ipc=['H01L'], predicate_keywords=['defect', 'inspection'], predicate_ipc=[], start_date=None, end_date=None, countries=['US', 'JP'], limit=20)
+2025-07-27 21:52:08,219 [INFO] --- 生成されたSQL ---
+2025-07-27 21:52:08,220 [INFO] WITH PatentData AS (
+            SELECT
+                publication_number,
+                (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+                (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract,
+                (SELECT STRING_AGG(name) FROM UNNEST(assignee_harmonized)) as assignee,
+                publication_date,
+                ipc, -- IPCをそのまま渡す
+                (SELECT STRING_AGG(code) FROM UNNEST(ipc)) as ipc_codes,
+                CONCAT(
+                    (SELECT text FROM UNNEST(title_localized) WHERE language IN ('en', 'ja') LIMIT 1), ' ',
+                    (SELECT text FROM UNNEST(abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)
+                ) as search_text
+            FROM
+                `patents-public-data.patents.publications`
+        )
+        SELECT
+            p.publication_number,
+            p.title,
+            p.abstract,
+            p.assignee,
+            p.publication_date,
+            p.ipc_codes
+        FROM
+            PatentData p
+        WHERE
+  SUBSTR(p.publication_number, 1, 2) IN UNNEST(@countries)
+  AND ((LOWER(p.search_text) LIKE @s_kw_0 OR LOWER(p.search_text) LIKE @s_kw_1) OR (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @s_ipc_2)))
+  AND ((LOWER(p.search_text) LIKE @p_kw_3 OR LOWER(p.search_text) LIKE @p_kw_4))
+        LIMIT @limit
+2025-07-27 21:52:08,220 [INFO] --- SQLパラメータ ---
+2025-07-27 21:52:08,220 [INFO] {
+  "countries": {
+    "type": "ARRAY<STRING>",
+    "value": [
+      "US",
+      "JP"
+    ]
+  },
+  "s_kw_0": {
+    "type": "STRING",
+    "value": "%semiconductor%"
+  },
+  "s_kw_1": {
+    "type": "STRING",
+    "value": "%manufacturing%"
+  },
+  "s_ipc_2": {
+    "type": "STRING",
+    "value": "H01L%"
+  },
+  "p_kw_3": {
+    "type": "STRING",
+    "value": "%inspection%"
+  },
+  "p_kw_4": {
+    "type": "STRING",
+    "value": "%defect%"
+  },
+  "limit": {
+    "type": "INT64",
+    "value": 20
+  }
+}
+2025-07-27 21:52:08,220 [INFO] --- BigQuery検索開始 ---
+2025-07-27 21:52:11,181 [INFO] --- 検索成功 ---
+2025-07-27 21:52:11,181 [INFO] 20件の特許が見つかりました。
+2025-07-27 21:52:11,181 [INFO] --- 結果のプレビュー (先頭5件) ---
+2025-07-27 21:52:11,186 [INFO] 
+  publication_number                                                                                                                                                                                                                          title                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   abstract                                      assignee  publication_date                                                                                                            ipc_codes
+0   US-2015126035-A1                                                                                                                                                                   Novel Mask Removal Process Strategy for Vertical NAND Device                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A method for removing a doped amorphous carbon mask from a semiconductor substrate is disclosed. The method comprises generating a plasma to be used in treating the substrate, wherein the plasma comprises an oxygen containing gas, a halogen containing gas, and a hydrogen containing gas; and treating the substrate by exposing the substrate to the plasma. The doped amorphous carbon mask can be a boron doped amorphous carbon mask or a nitrogen doped amorphous carbon mask. The method can result in a mask removal rate ranging from about 1,000 Ångströms/minute to about 12,000 Ångströms/minute. Further, gases can be applied to the substrate before plasma treatment, after plasma treatment, or both to reduce the amount of defects or pinholes found in the substrate film.                              MATTSON TECH INC          20150507                                                                            H01L21/311,H01L21/033,H10B69/00,H10B41/35
+1   US-2018083000-A1                                                                                                                                                                                     Fin epitaxy with lattice strain relaxation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               A semiconductor having a first lattice constant is deposited on an exposed sidewall of a relatively small group IV semiconductor substrate fin having a second lattice constant that does not equal the first lattice constant to form a semiconductor fin without any crystal defects resulting from a lattice mismatch between the first lattice constant and the second lattice constant.                                  QUALCOMM INC          20180322  H01L21/762,H01L29/20,H01L21/306,H01L27/088,H01L29/06,H01L21/3065,H01L29/16,H01L29/10,H01L29/78,H01L21/265,H01L29/66
+2    JP-2007298416-A                                                                                                         Device and method for inspecting sheet-like transparent body, and manufacturing method for sheet-like transparent body                                                                                                                                                                                                                                                                                                                                                                                                                                             &lt;P&gt;PROBLEM TO BE SOLVED: To provide a device for inspecting a sheet-like transparent body, capable of detecting reliably a bright defect.  &lt;P&gt;SOLUTION: This device 100 of the present invention for inspecting the sheet-like transparent body includes the first inspection means 10 for obtaining the first transmission luminous energy by illuminating a surface of the sheet-like transparent body 5 with light from a normal direction to receive the light transmitted through the sheet-like transparent body, and the second inspection means 20 for obtaining the second transmission luminous energy by illuminating the surface of the sheet-like transparent body 5 with the light at an angle smaller than 90° to receive the light transmitted through the sheet-like transparent body.  &lt;P&gt;COPYRIGHT: (C)2008,JPO&amp;INPIT                                   KANEKA CORP          20071115                                                                                                           G01N21/892
+3    JP-2008090916-A  Manufacturing method of substrate for magnetic recording medium, manufacturing method of magnetic recording medium, inspection method of substrate for magnetic recording medium, and substrate for magnetic recording medium  &lt;P&gt;PROBLEM TO BE SOLVED: To suitably manage a shape of a texture of a substrate for a magnetic recording medium.  &lt;P&gt;SOLUTION: The manufacturing method of the substrate for the magnetic recording medium includes a preparing step S102 for preparing the substrate, a texture forming step S104 for forming the texture on a principal surface of the substrate and an inspection step S106 for inspecting the shape of the texture, wherein the inspection step S106 has a cross-sectional shape measuring stage S202, a Fourier transform stage S204 for transforming a waveform of the cross-sectional shape into a relation between a wavelength and intensity by Fourier-transforming the waveform of the cross-sectional shape, an integrating stage S206 for calculating a total range integration value obtained by integrating intensity about the total range of wavelength and a set range integration value obtained by integrating intensity about a preset range of wavelength based on the relation of the wavelength and intensity and a judgement stage S208 for determining the substrate as a standard when the ratio of the set range integration value to the total range integration value is a reference value or above.  &lt;P&gt;COPYRIGHT: (C)2008,JPO&amp;INPIT        HOYA CORP,HOYA MAGNETICS SINGAPORE PTE          20080417                                                                                                    G11B5/84,G11B5/73
+4    JP-2008129183-A                                                                                                                                                                                        エレクトロルミネッセンス表示装置の駆動方法及びエレクトロルミネッセンス表示装置                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     &lt;P&gt;PROBLEM TO BE SOLVED: To detects in real time and correct display unevenness of an EL display device.  &lt;P&gt;SOLUTION: In a horizontal or vertical blanking period of a video signal, an element driving transistor for controlling a driving current to be supplied to an EL element is made to operate in a saturation area, and a cathode current when the EL element is held at a light emission level, is detected. A data signal supplied to each pixel is corrected based upon the cathode current detection value to perform high-speed display unevenness inspection and high-precision display unevenness correction.  &lt;P&gt;COPYRIGHT: (C)2008,JPO&amp;INPIT  SANYO ELECTRIC CO,SANYO SEMICONDUCTOR CO LTD          20080605                                                                                          G09G3/30,G09G3/20,H01L51/50
+2025-07-27 21:52:11,208 [INFO] --- テスト終了 ---

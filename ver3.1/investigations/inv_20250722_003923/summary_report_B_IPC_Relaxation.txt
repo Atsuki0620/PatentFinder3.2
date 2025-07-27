@@ -1,0 +1,261 @@
+# 特許調査レポート (B_IPC_Relaxation)
+
+## 1. 調査テーマ
+逆浸透膜における機械学習を用いた運転最適化
+
+## 2. 検索戦略
+IPC分類を上位の階層に緩和し、キーワードは元のまま。OR条件で使用し、技術分野の裾野を広げる。
+
+## 3. 実行されたSQLクエリ
+```sql
+
+    SELECT p.publication_number,
+           (SELECT text FROM UNNEST(p.title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+           (SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract
+    FROM `patents-public-data.patents.publications` AS p WHERE (EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_0) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_1) OR EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_2)) OR (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_0 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_1 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_2 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_3 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_4 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_5 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_6 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_7 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_8 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_9 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_10) LIMIT 50
+    
+```
+
+## 4. 検索結果 (50)件)
+
+### [1] US-2016300172-A1
+- **タイトル:** Systems and Methods for Site-Specific Tracking of Snowfall
+- **要約:** A central server containing a database receives snowfall data from weather stations that are contained at a multitude of different sites within a defined geographical area. The central server stores the snowfall data in the database, correlating the data with various user accounts. For instance, the data is correlated with the account of the owner of the site from which the data was received, and with the accounts of landscape contractors whom the owner of the site has engaged to clear snow from his site. The central server provides alerts to various user accounts based on the snowfall data. For instance, the server provides alerts to site owners based on the snowfall at their sites, and to landscape contractors based on the snowfall at sites they are engaged to clear snow from.
+---
+### [2] US-2016304129-A1
+- **タイトル:** Vehicle Roof with Truss Structure
+- **要約:** A vehicle roof support structure including a pair of reinforcing truss members. The roof support structure includes a header, a roof bow, right and left roof rails, and a center roof support. The trusses form triangular reinforcing structures on the driver-side and passenger-side.
+---
+### [3] US-2016304375-A1
+- **タイトル:** Produced water treatment system
+- **要約:** A produced water treatment system includes: a raw water flow passage to allow produced water to flow therethrough; a desalination flow passage connected to the raw water flow passage, and connected to a membrane distillation apparatus which removes a salt in the produced water flowing in from the raw water flow passage; and a bypass flow passage connected to the desalination flow passage and configured to supply the produced water to desalinated water obtained by desalination by the membrane distillation apparatus.
+---
+### [4] US-2016310215-A1
+- **タイトル:** Method and system for performing a guided biopsy using digital tomosynthesis
+- **要約:** A method and system for performing a biopsy guided by a 3D image of the object obtained from digital tomosynthesis is performed. The method includes applying a compression paddle to an object; performing a tomosynthesis scan; reconstructing at least a portion of the scan; locating a lesion using a displayed or reprojected marker to determine a location of the lesion; correlating the location of the lesion in the scan to a marker on the compression paddle or tool holder; and proposing a needle entry point of a biopsy tool based off of the correlation so that a needle or penetration device will effectively reach the lesion or target if it is inserted at the proposed entry point. A system for performing a biopsy is further disclosed. In one embodiment, the system comprises: a tomosynthesis imaging apparatus for performing a tomosynthesis scan comprising an x-ray source and an x-ray detector; at least one marker; a compression paddle; a controller; and a display screen for displaying at least a portion of a reproduction of a tomosynthesis scan generated by the imaging apparatus, wherein (i) the at least one marker is displayed on the reproduction, the marker being used to determine a lesion location or target, and (ii) the controller correlates the lesion location or target with the at least one marker and generates a proposed needle entry point based on the correlation so that a needle or penetration device will effectively reach the lesion or target if it is inserted at the proposed entry point.
+---
+### [5] US-2016310925-A1
+- **タイトル:** A method of shutting down an operating three-phase slurry bubble column reactor
+- **要約:** A method is provided of shutting down an operating three-phase slurry bubble column reactor ( 10 ) having downwardly directed gas distribution nozzles ( 30 ) submerged in a slurry body ( 19 ) of solid particulate material suspended in a suspension liquid contained inside a reactor vessel ( 12 ), with the gas distribution nozzles ( 30 ) being in flow communication with a gas feed line ( 26 ) through which gas is being fed to the gas distribution nozzles ( 30 ) by means of which the gas is injected downwardly into the slurry body ( 19 ). The method includes abruptly stopping flow of gas from the gas feed line ( 26 ) to the gas distribution nozzles ( 30 ) to trap gas in the gas distribution nozzles ( 30 ) thereby to inhibit slurry ingress upwardly into the gas distribution nozzles ( 30 ).
+---
+### [6] US-2016311014-A1
+- **タイトル:** Casting Mould for Casting Steel Melt
+- **要約:** A casting mould for casting steel melt into a continuously drawn strand is provided herein. A surface texture is formed on at least one inner surface of the casting mould facing towards the melt to be cast. The surface texture extends at least over region of the casting mould which, during operation, is wetted with slag floating on the melt that has been poured into the casting mould. The casting mould allows optimum solidification behaviour in the region of the casting mould that is critical in terms of the risk of crack formation. The surface texture is designed as a closed structure with self-contained, randomly distributed indentations.
+---
+### [7] US-2016315365-A1
+- **タイトル:** Counter-flow heat exchanger for battery thermal management applications
+- **要約:** A heat exchanger for thermal management of battery units made-up of a plurality of battery cells or containers housing one or more battery cells is disclosed. The heat exchanger has a main body portion formed by a pair of outer plates and an intermediate plate defining a primary heat transfer surface on either side of the heat exchanger for contacting a corresponding surface of at least one of the battery cells or containers. The intermediate plate together with the outer plates forming a plurality of alternating first and second fluid flow passages the flow direction through the first fluid flow passages being generally opposite to the flow direction through the second fluid flow passages. The first and second fluid flow passages are formed on opposite sides of the intermediate plate and are fluidly interconnected at corresponding ends creating a counter-flow arrangement through the main body portion of the heat exchanger.
+---
+### [8] US-2016318862-A1
+- **タイトル:** Synthesis of delta 12-pgj3 and related compounds
+- **要約:** In one aspect, the present invention provides novel derivatives of Δ 12 -PGJ 3  and modular synthetic pathways to obtaining Δ 12 -PGJ 3  and derivatives thereof. In some aspects, the present derivatives of Δ 12 -PGJ 3  are useful as chemotherapeutic agents. The present disclosure also describes compositions of these derivatives as well as methods of use of the derivatives thereof.
+---
+### [9] US-2016321185-A1
+- **タイトル:** Controlling displacement in a co-operative and adaptive multiple-level memory system
+- **要約:** In one embodiment, a processor includes a control logic to determine whether to enable an incoming data block associated with a first priority to displace, in a cache memory coupled to the processor, a candidate victim data block associated with a second priority and stored in the cache memory, based at least in part on the first and second priorities, a first access history associated with the incoming data block and a second access history associated with the candidate victim data block. Other embodiments are described and claimed.
+---
+### [10] US-2016322849-A1
+- **タイトル:** Wireless charging device and system with suppressed electromagnetic wave divergence and enhanced charging efficiency
+- **要約:** A wireless charging device includes a casing, a transmitter coil assembly and a shielding structure. The casing includes a main body with an accommodation space and an entrance. At least one power-receiving device is accommodated within the accommodation space. The transmitter coil assembly is disposed within the main body, and emits an electromagnetic wave with at least one specified frequency for wirelessly charging the at least one power-receiving device. Each transmitter coil assembly includes at least one antenna for receiving an AC signal so as to emit the electromagnetic wave. The shielding structure is attached on an outer surface of the main body or disposed within the main body. The shielding structure at least shields the antenna of the transmitter coil assembly so as to block divergence of the electromagnetic wave.
+---
+### [11] US-2016327348-A1
+- **タイトル:** Corrugated fin and heat exchanger including the same
+- **要約:** A corrugated fin has flat plate sections each having a pair of lateral sides facing each other and a pair of end sides facing each other, and joining sections connecting with lateral sides of the flat plate sections. The flat plate sections and joining sections are alternately formed into a corrugated shape by bending. The joining section has an even surface joined to a tube through which a heat exchange medium flows, while the flat plate section includes a recess or protrusions in arbitrary sections taken along two directions including a direction in which the lateral sides are arranged and a direction in which the end sides are arranged, respectively.
+---
+### [12] US-2016329392-A1
+- **タイトル:** Display device
+- **要約:** A display device includes a transistor including first and second gates. A first terminal of the transistor is electrically connected to a third wiring. A first switch controls electrical connection between a first wiring and the first gate. A second switch controls electrical connection between a second wiring and the second gate. A third switch controls electrical connection between the first gate and a second terminal of the transistor. A fourth switch controls electrical connection between a fifth wiring and the second terminal of the transistor. A first capacitor retains a potential difference between the first gate and the second terminal of the transistor. A second capacitor retains a potential difference between the first gate and the second gate. A first terminal of the light-emitting element is electrically connected to the second terminal of the transistor. A second terminal of the light-emitting element is electrically connected to a fourth wiring.
+---
+### [13] US-2016329867-A1
+- **タイトル:** Amplifiers
+- **要約:** This application relates to audio amplifier circuitry ( 100 ). An amplifier module ( 103 ) is located in a signal path between an input ( 101 ) and an output ( 102 ). A detection module ( 106 ) is configured to detect a characteristic of a load ( 104 ) electrically coupled, in use, to the output. A distortion setting controller ( 107 ) is provided for selecting one of a plurality of stored distortion settings {p i } based on the detected characteristic of the load; and a pre-distortion module ( 105 ) is configured to apply a first transfer function to a signal in the signal path prior to said amplifier module. The first transfer function is based on the selected distortion setting and for at least one of the stored distortion settings the corresponding first transfer function comprises a non-linear distortion function.
+---
+### [14] US-2016333209-A1
+- **タイトル:** Ink composition, ink set, and ink jet recording method
+- **要約:** An ink composition contains (a) a compound which is represented by the following Formula (1) and has a specific molecular weight, (b) a colorant, (c) a polymer having an SP value of equal to or greater than 17 and equal to or less than 24, and (d) water, in which there is a specific relationship between a log P value of the component (a) and an SP value of the component (c). An ink set contains the ink composition, and an ink jet recording method uses the ink composition: 
+     
+       
+         
+         
+             
+             
+         
+       
+     
+     R represents a specific alkyl group; Z 1  represents a single bond, —NR 1 —, or —O—; Z 2  represents —NR 1 — or —O—; at least one of Z 1  or Z 2  is —NR 1 —; R 1  represents a hydrogen atom or a specific alkyl group; and L represents a specific alkylene group or —C 2 H 4 —O—C 2 H 4 —.
+---
+### [15] US-2016336178-A1
+- **タイトル:** Plasma assisted atomic layer deposition of multi-layer films for patterning applications
+- **要約:** Methods and apparatus for depositing nanolaminate films are provided. In various embodiments, the nanolaminate film may be deposited over a core layer, which may be patterned. The nanolaminate film may act as a spacer while performing a double or quadruple patterning process. The nanolaminate film may include at least two different types of film. In some cases, the two different types of film have different compositions. In some cases, the two different types of film may be deposited under different deposition conditions, and may or may not have the same composition. After the nanolaminate film is deposited, the substrate may be etched to expose the core layer. Some portions of the nanolaminate film (e.g., portions that form on sidewalls of features patterned in the core layer) may remain after etching, and may serve as a mask during later processing steps in a double or quadruple patterning process.
+---
+### [16] US-2016337664-A1
+- **タイトル:** Manipulating sub-pictures of a compressed video signal
+- **要約:** The invention relates to manipulation of sub-pictures ( 303 ) in a picture such as a mosaic screen ( 301 ). An apparatus comprises a sub-picture generator ( 105 ) connected to a mosaic screen generator ( 107 ), which generates the mosaic screen ( 301 ) from the sub-pictures. The mosaic screen ( 301 ) is by a video compressor ( 111 ) divided into uncompressed picture blocks such that each block only comprise video data from one sub-picture. The picture blocks are compressed using a block compression scheme such as MPEG-2. The apparatus further comprises a video manipulation processor ( 113 ), which manipulates the sub-pictures by manipulating the association between control data in the video signal and the compressed picture blocks. The video data of the compressed picture blocks are not affected whereby de-compression and new compression is avoided.
+---
+### [17] US-2016343010-A1
+- **タイトル:** Opportunity dashboard
+- **要約:** Approaches for providing embodiments of an opportunity dashboard are presented, comprising receiving vehicle service data, wherein the vehicle service data comprises service work performed on vehicles over a predetermined period of past time; calculating an estimated future demand for vehicle service work over a predetermined period of future time based on the vehicle service data; calculating an estimated maximum future capacity for vehicle service work over the predetermined period of future time based on the vehicle service data; analyzing constraints on the capacity for vehicle service work over the predetermined period of future time; modifying the estimated maximum future capacity for vehicle service work over a predetermined period of future time based on the constraints; determining a difference between the estimated maximum future capacity for vehicle service work over a predetermined period of future time and the estimated future demand; and converting the difference into monetary value.
+---
+### [18] US-2016344643-A1
+- **タイトル:** Systems and methods for prioritization of data for intelligent discard in a communication network
+- **要約:** Systems and methods for optimizing system performance of capacity and spectrum constrained, multiple-access communication systems by selectively discarding packets are provided. The systems and methods provided herein can drive changes in the communication system using control responses. One such control responses includes the optimal discard (also referred to herein as “intelligent discard”) of network packets under capacity constrained conditions. The systems and methods prioritize packets and make discard decisions based upon the prioritization. Some embodiments provide an interactive response by selectively discarding packets to enhance perceived and actual system throughput, other embodiments provide a reactive response by selectively discarding data packets based on their relative impact to service quality to mitigate oversubscription, others provide a proactive response by discarding packets based on predicted oversubscription, and others provide a combination thereof.
+---
+### [19] US-2015091225-A1
+- **タイトル:** Leaf spring and method of manufacture thereof having sections with different levels of through hardness
+- **要約:** Leaf springs, and methods of manufacturing thereof, having first and second sections, spaced apart along the length of said leaf spring, said sections are through hardened and tempered to achieve, respectively different levels of finished through hardness, are disclosed.
+---
+### [20] US-2015091316-A1
+- **タイトル:** Container-handling or gripper arrangement
+- **要約:** A container-handling or gripper arrangement. The abstract of the disclosure is submitted herewith as required by 37 C.F.R. §1.72(b). As stated in 37 C.F.R. §1.72(b): A brief abstract of the technical disclosure in the specification must commence on a separate sheet, preferably following the claims, under the heading “Abstract of the Disclosure.” The purpose of the abstract is to enable the Patent and Trademark Office and the public generally to determine quickly from a cursory inspection the nature and gist of the technical disclosure. The abstract shall not be used for interpreting the scope of the claims. Therefore, any statements made relating to the abstract are not intended to limit the claims in any manner and should not be interpreted as limiting the claims in any manner.
+---
+### [21] US-2015093377-A1
+- **タイトル:** Amino acid sequences directed against the Angiopoietin/Tie system and polypeptides comprising the same for the treatment of diseases and disorders related to angiogenesis
+- **要約:** The present invention relates to amino acid sequences that are directed against proteins from the group of the Angiopoietin/Tie family such as Tie1, Tie2, Ang1, Ang2, Ang3, Ang4, Angptl1, Angptl2, Angptl3, Angptl4, Angptl5, Angptl6, as well as to compounds or constructs, and in particular proteins and polypeptides, that comprise or essentially consist of one or more of such amino acid sequences.
+---
+### [22] US-2015093906-A1
+- **タイトル:** Substrate treatment method and substrate treatment apparatus
+- **要約:** A substrate treatment apparatus which can more efficiently regenerate phosphoric acid which is able to be returned to etching treatment along with such etching treatment as much as possible without using a large facility, that is a substrate treatment apparatus which treats a silicon substrate W on which a nitride film is formed by a liquid etchant which contains phosphoric acid, which comprises an etching treatment unit (the spin treatment unit  30 ) which gives a suitable quantity of liquid, etchant to each substrate which is fed one at a time so as to etch the substrate and remove the nitride film, a phosphoric acid regenerating unit (the spin treatment unit  30 ) which mixes liquid etchant used for treatment of one substrate and a suitable quantity of liquid hydrofluoric acid for the amount of the used liquid etchant under a predetermined temperature environment to regenerate the phosphoric acid, and a phosphoric acid recovery unit (the pump  38,  phosphoric acid recovery tank  50,  and pump  52 ) which returns the phosphoric acid which was obtained by the phosphoric acid regenerating unit to the liquid etchant to be used at the etching treatment unit.
+---
+### [23] US-2015095365-A1
+- **タイトル:** Query building using schema
+- **要約:** A query building mechanism in which a query builder component assists a user in generating queries to be used to populate user interface elements. A control provides a query schema to the query builder component. The query schema identifies available query parameters that the control is capable of using to populate a corresponding user interface element. The query builder component presents at least some of the available query parameters the user, such that the user may edit these parameters. The query builder component gathers those edits and generates a query therefrom. The query parameters may be provided to the query builder component in consistent manner across a wide variety of possible user interface controls. Furthermore, the resulting query is provided in a uniform query format.
+---
+### [24] US-2015095504-A1
+- **タイトル:** Method and system for providing ims session continuity to a user equipment across a plurality of communication networks
+- **要約:** A method and system for providing IP Multimedia Subsystem (IMS) session continuity to a User Equipment (UE) across a plurality of communication networks is provided. The UE traverses from a first communication network to a second communication network. A public user identity associated with a private user identity of the UE is registered with the first communication network by using a first address. The method includes generating ( 404 ) identity associated with a public user a complimentary private user identity associated with the public user identity. The method also includes obtaining ( 406 ) a second address from the second communication network when the UE traverses from the first communication network to the second communication network. Moreover, the method includes registering ( 408 ) the public user identity associated with the complimentary private user identity with the first communication network by using the second address.
+---
+### [25] US-2015096431-A1
+- **タイトル:** Resonance and articulation trainer
+- **要約:** A resonance and articulation training device that includes a body with an open end and a closed end. A vertical tube is attached to the body near the closed end, and a pellet is located within the vertical tube. One or more holes along the body may be used to adjust the amount of airflow needed to lift the pellet. A mouthpiece or head joint from a musical instrument may be attached to the open end. Generating a tone with the mouthpiece or head joint creates an airflow in the body. If the airflow is sufficient, it may lift the pellet.
+---
+### [26] US-2015099080-A1
+- **タイトル:** Semiaromatic polyamide comprising a chain ending
+- **要約:** The invention relates to a copolyamide comprising at least two different units corresponding to the following general formulation: 
+       A/X.T 
+     A is chosen from a unit obtained from an amino acid, a unit obtained from a lactam and a unit corresponding to the formula (C a  diamine)·(C b  diacid), with a representing the number of carbon atoms of the diamine and b representing the number of carbon atoms of the diacid, a and b each being between 4 and 36, advantageously between 9 and 18, 
+     X.T denotes a unit obtained from the polycondensation of a C x  diamine and of terephthalic acid, with x representing the number of carbon atoms of the C x  diamine, x being between 9 and 36, advantageously between 10 and 18, 
+     characterized in that said copolyamide exhibits: 
+     a content of amine chain ends of greater than or equal to 20 μeq/g, 
+     a content of acid chain ends of less than or equal to 100 μeq/g, and 
+     a content of unreactive chain ends of greater than or equal to 20 μeq/g, 
+     and to the process for the preparation of said copolyamide, to a composition comprising this copolyamide and to the use of this copolyamide and of such a composition.
+---
+### [27] US-2015100821-A1
+- **タイトル:** Storage control apparatus, storage control system, and storage control method
+- **要約:** A storage control apparatus includes: a detector configured to detect a failure in one of a plurality of storages, each of a plurality of cabinets coupled in a cascade and having the plurality of storage units; a mover configured to move data in one or a plurality of first storages accommodated in a first cabinet including a failed storage having the failure detected by detector to one or a plurality of second storages accommodated in a second cabinet included in the plurality of cabinets; and a connection controller configured to control a first connection between the first cabinet and the plurality of cabinets other than the first cabinet and a second connection between the plurality of first storages in the first cabinet and the plurality of cabinets other than the first cabinet.
+---
+### [28] US-2015103780-A1
+- **タイトル:** Systems and Methods for Signal Brokering in Distributed Evolved Packet Core (EPC) Network Architectures
+- **要約:** Internet protocol (IP) address allocations in distributed EPC networks can be published to an IP address registry maintained at the central EPC entity in order to facilitate the routing of authentication authorization, and accounting (AAA) signaling of third party networks throughout the distributed EPC network architecture. The address allocations can be published directly to an address registry maintained by the central EPC entity, or indirectly via a cloud management server. Additionally, latencies associated with UE authentication in distributed EPC network architectures can be mitigated by triggering communication of the authentication or authorization profile upon reception of an update location request (ULR) message at the central EPC network entity.
+---
+### [29] US-2015104679-A1
+- **タイトル:** Method of operating and conditioning electrochemical cells comprising electrodeposited fuel
+- **要約:** A process for conditioning an electrochemical cell system comprising at least two electrochemical cells comprises selecting from the fuel electrodes of the electrochemical cells groups comprising: a charged group and a reset group. The process also comprises holding the fuel electrodes within the charged group at a predetermined state of charge associated with a set concentration of metal fuel ions in solution in the ionically conductive medium. The process further comprises resetting the fuel electrodes within the reset group. An electrochemical cell system includes a plurality of fuel electrodes and one or more controllers configured to regulate the concentration of reducible metal fuel ions in solution with an ionically conductive medium by maintaining a predetermined state of charge of at least one of the fuel electrodes, and initiate a charging, discharging, or resetting process on at least one other fuel electrode. Other features and embodiments are also disclosed.
+---
+### [30] US-2015108413-A1
+- **タイトル:** Polymer Serving as an Electrode Material for Lithium Secondary Batteries
+- **要約:** The present invention relates to a polymer possessing a linear backbone selected from the homopolymers belonging to the family of polyfluorenes, polycarbazoles, polyanilines, polyphenylenes, polyisothionaphthenes, polyacetylenes, polyphenylene vinylenes, and copolymers thereof, said backbone bearing at least one side group possessing at least one nitroxide function. 
+     It also relates to an electrode material, an electrode and a lithium secondary battery obtained from such a polymer.
+---
+### [31] US-2015109241-A1
+- **タイトル:** Multi-touch sensing panel production method
+- **要約:** A method of producing a non-planar multi-touch sensing panel, said panel comprising a plurality of electrically isolated conductors crossing each other at a plurality of intersection points. The method comprises: forming the plurality of electrically isolated conductors by laying down insulated conducting wire on an adhesive layer, said insulated conducting wire comprising an insulating coating; forming a flexible conductor array sheet from the insulated conducting wires laid down on the adhesive layer, and laminating the flexible conductor array sheet onto a non-planar protective substrate thereby forming the non-planar multi-touch sensing panel.
+---
+### [32] US-2015113755-A1
+- **タイトル:** Longitudinal body for a vehicle window wiper
+- **要約:** A longitudinal body for a wiper for a window of a vehicle, in particular a motor vehicle, is disclosed. The longitudinal body is formed in one piece and is configured to hold a wiper blade and/or retaining a stiffener vertebra by at least one housing for receiving the vertebra or a heel of the wiper blade. The longitudinal body defines at least one internal longitudinal cavity that extends out of the housing, the cavity being intersected by a longitudinal plane P passing through vertical walls delimiting the housing.
+---
+### [33] US-2015122392-A1
+- **タイトル:** Pneumatic tire
+- **要約:** A pneumatic tire with improved noise performance while preserving the steering stability and rolling resistance includes, on radially outer side of the crown portion of a carcass, an inclined belt consisting of inclined belt layer(s) having cords inclined at an angle of 35° to 90° relative to the tire circumferential direction, a circumferential belt consisting of circumferential belt layer(s) having cords extending along the circumferential direction, and a tread on radially outer side of the circumferential belt. The circumferential belt includes a high rigidity region across the tire equator wherein the circumferential rigidity per unit width is higher at any location thereof than at any location in the remaining regions. The circumferential rigidity per unit width in the remaining regions is constant in the tire width direction or increases toward the high rigidity region.
+---
+### [34] US-2015122546-A1
+- **タイトル:** Device comprising a space charge trapping layer
+- **要約:** The present invention relates to a device comprising at least one electrical cable ( 10   a,    10   b , and  10   c ) for transporting DC current, said electrical cable comprising an elongate electrical conductor ( 11   a,    11   b , and  11   c ) surrounded by at least one first semiconducting layer ( 12   c ), an electrically insulating layer ( 13   a,    13   b  and  13   c ) surrounding the first semiconducting layer and a second semiconducting layer ( 14   a,    14   b  and  14   c ) surrounding the electrically insulating layer, characterized in that the electrical cable ( 10   a,    10   b , and  10   c ) furthermore comprises a space charge trapping layer ( 15   a,    15   b , and  15   c ) obtained on the basis of a polymeric composition comprising at least one organic polymer and at least one linear filler, the space charge trapping layer ( 15   a,    15   b , and  15   c ) replacing at least in part the second semiconducting layer ( 14   a,    14   b , and  14   c ) of the electrical cable, so that the space charge trapping layer is in physical contact with the electrically insulating layer ( 13   a,    13   b , and  13   c ) of the electrical cable.
+---
+### [35] US-2015126035-A1
+- **タイトル:** Novel Mask Removal Process Strategy for Vertical NAND Device
+- **要約:** A method for removing a doped amorphous carbon mask from a semiconductor substrate is disclosed. The method comprises generating a plasma to be used in treating the substrate, wherein the plasma comprises an oxygen containing gas, a halogen containing gas, and a hydrogen containing gas; and treating the substrate by exposing the substrate to the plasma. The doped amorphous carbon mask can be a boron doped amorphous carbon mask or a nitrogen doped amorphous carbon mask. The method can result in a mask removal rate ranging from about 1,000 Ångströms/minute to about 12,000 Ångströms/minute. Further, gases can be applied to the substrate before plasma treatment, after plasma treatment, or both to reduce the amount of defects or pinholes found in the substrate film.
+---
+### [36] US-2015133021-A1
+- **タイトル:** Bubble generating apparatus
+- **要約:** A bubble generating apparatus includes an air flow generator, a liquid tray defined by a floor and sidewalls and having one or more bubble forming ports therein, and a pivot arm coupled to a motor for pivoting the pivot arm about an axis so that during pivoting a bubble generating member of the pivot arm passes over one of the bubble forming ports, the air flow generator positioned to direct an air stream through the one or more bubble forming ports, and a gravity feed liquid reservoir, wherein the liquid tray is configured to generate bubbles from the liquid when the air flow generator directs the air stream through the one or more bubble forming ports while the pivot arm pivots about the axis.
+---
+### [37] US-2015133293-A1
+- **タイトル:** Method for deposition of noble metal nanoparticles on catalysts to promote same, and the compositions so produced
+- **要約:** A method for promoting the supported catalysts using noble metal nanoparticles. Different noble metal precursors are preferentially deposited onto the supported metal catalysts through Chemical vapor deposition (CVD), and compositions so produced. Further, the promoted catalyst is used for CO and CO 2  hydrogenation reactions, increasing the reaction conversion, C 5+  compounds selectivity and chain growth probability. The active phase of catalyst can be either cobalt oxide, nickel oxide or their reduced format (Co 0  or Ni 0 ), and the noble metal is preferably Ruthenium.
+---
+### [38] US-2015137664-A1
+- **タイトル:** Piezoelectric actuator array
+- **要約:** A piezoelectric actuator array comprising a substrate plate ( 10 ) with a number of signal leads ( 14 ) and at least one common lead ( 18 ) formed on at least one surface ( 12 ) thereof, and a number of piezoelectric bodies ( 30, 32 ) arranged in a row ( 34 ) on one surface ( 12 ) of the substrate plate and formed by dividing a common piezoelectric block, said piezoelectric bodies comprising a number of active bodies ( 30 ) each of which has, on a first side of said row ( 34 ), a signal electrode ( 38 ) in contact with one of said signal leads ( 14 ) and, on an opposite second side of the row, a common electrode ( 40 ) in contact with said common lead ( 18 ), said substrate plate ( 10 ) having at least one connector lead ( 16 ) disposed on the first side of the row ( 34 ) and electrically connected to the common lead ( 18 ) on the second side of the row, wherein said piezoelectric bodies comprise at least one piezoelectric body ( 32 ) with a conductive outer surface layer ( 42 ) that establishes an electrically conductive path from the connector lead ( 16 ) to the common lead ( 18 ).
+---
+### [39] US-2015138499-A1
+- **タイトル:** Ophthalmic device formed by additive fabrication and method thereof
+- **要約:** An ophthalmic device is formed by additive fabrication, the optical device having an optical surface with a surface roughness on the order of less than 10 microns. A method is provided for making an ophthalmic device including an optical surface having a surface roughness of less than 10 microns by depositing on a stage in a first relative position a first lamina of particulates having a size less than 10 microns and in select configurations less than two microns and certain configurations less than one micron, and, synergistically stimulating the first lamina of particulates to form a first solidified layer.
+---
+### [40] US-2015142446-A1
+- **タイトル:** Credit Risk Decision Management System And Method Using Voice Analytics
+- **要約:** A credit risk decision management system and method using voice analytics are disclosed. The voice analysis may be applied to speaker authentication and emotion detection. The system introduces use of voice analysis as a tool for credit assessment, fraud detection and a measure of customer satisfaction and return rate probability when lending to an individual or a group. Emotions in voice interactions during a credit granting process are shown to have high correlation with specific loan outcomes. This system may predicts lending outcomes that determine if a customer might face financial difficulty in near future and ascertains affordable credit limit for such a customer. Information carrying features are extracted from the customer&#39;s voice files, and mathematical and logical transformations are performed on these features to get derived features. The data is then fed to a predictive model which captures the probability of default, intent to pay and fraudulent activity involved in a credit transaction. The voice prints can also be transcribed into text and text analytics can be performed on the data obtained to infer similar lending outcomes using Natural Language Processing and predictive modeling techniques.
+---
+### [41] US-2015142602-A1
+- **タイトル:** Method and system for automated identification and engagement of service providers
+- **要約:** The current document is directed to methods and systems that identify projects for which service consumers desire service provision and identify available candidate service providers that best match various project parameters and service-provision criteria determined by the automated system. Information describing the identified candidate service providers is presented to the service consumers by the systems to allow service consumers in order to facilitate their selection of service providers and scheduling of service provision. In one described implementation, service providers are matched to stock-keeping-unit (“SKU”) identifiers and location or locations. Service providers identified in the initial SKU-and-location-based matching process are then scored and ranked according to additional criteria and constraints, with information describing the highest-ranked service candidate providers provided to service consumers for selection and scheduling.
+---
+### [42] US-2015145157-A1
+- **タイトル:** Production and reparation of non-porous laminates with assessable low degree of fiber content
+- **要約:** A method of forming a fiber reinforced composite structure having a fiber volume fraction ( 14 ) below 50 vol.-% using vacuum bag molding, the method comprising the steps of placing an assembly of fiber laminates ( 3 ) on a tool surface ( 1.1 ), creating a predetermined maximum difference of pressure ( 10 ) between the inside and the outside of an airtight envelope ( 4 ), infusing resin into the assembly of fiber laminates ( 3 ), reducing the difference of pressure between the inside and the outside of the airtight envelope ( 4 ), so that the assembly of fiber laminates ( 3 ) expands and the infusion of resin into the assembly of fiber laminates ( 3 ) continues thus forming a resin infused assembly of fiber laminates ( 3 ), and curing the resin infused assembly of fiber laminates ( 3 ).
+---
+### [43] US-2015145311-A1
+- **タイトル:** Prisoner safety seat and method of use
+- **要約:** A prisoner seat security device includes a retractable strap which hooks or clasps onto a prisoner, preferably by a restraint device on the prisoner, such as hand-cuffs. As the prison seats in the seat, the strap retracts. The officer can then lock the retraction mechanism so that the strap will not extend and the prisoner is held in place. When it is desired for the prisoner to get out of the chair, the lock is released, allowing the prisoner to stand the strap to be disconnected.
+---
+### [44] US-2015147090-A1
+- **タイトル:** Image Forming Apparatus Having Waste Toner Container Commonly Used For Photosensitive Drums and Transfer Belt
+- **要約:** An image forming apparatus includes a main frame, a plurality of process cartridges, a cartridge-supporting body, a belt, a belt cleaning unit, a waste toner cartridge, and a collective conveying unit. Each drum-cleaning unit collects waste toner on a corresponding photosensitive drum. The cartridge-supporting body supports the process cartridges and is movable between an internal position inside the main frame and an external position outside of the main frame. The belt cleaning unit collects waste toner on the belt. The waste toner cartridge accommodates both waste toner collected from the photosensitive drums by the drum-cleaning units and waste toner collected from the belt by the belt cleaning unit. The collective conveying unit aggregates both waste toner collected from the photosensitive drums by the drum-cleaning units and waste toner collected from the belt by the belt cleaning unit and conveys the aggregated waste toner to the waste toner cartridge.
+---
+### [45] US-2015153317-A1
+- **タイトル:** System for Inexpensive Characterization of Air Pollutants and Inexpensive Reduction of Indoor Dust
+- **要約:** The invention describes software (including mathematical models implemented in software) and related electronic circuits that can be used to combine data from local, inexpensive dust sensors (particle counters) with Internet-available rich data on pollutants, weather, optional household devices, sensors, and appliances to create a rich picture of the local environment, shape that environment through non-trivial control of said household appliances and ventilation systems to reduce buildup of household dust on surfaces or reduce sensitive individuals&#39; exposure to specific pollutants, and monitor individuals&#39; exposure to pollutants. The software might live in a smartphone (such as the inventors&#39; iPhone prototype), related hardware devices (such as a pollution sensor communicating via bluetooth with the smartphone) or in heating/cooling control system such as a common household thermostat. In particular, advanced control of windows or inexpensive air filters within a common forced air climate system to mitigate air pollution inexpensively are envisioned.
+---
+### [46] US-2015156361-A1
+- **タイトル:** Information processing apparatus, system, method, and storage medium
+- **要約:** With respect to a job input to a printer, a job information management unit in a computer obtains information about a ratio of a color area in each page of the input job from the printer before the information is overwritten and stores the obtained information together with job identification information in a job information storage unit. Further, if information which is not recorded by another computer is included in a color information list of the printer regarding a copy job or a FAX job, the job information management unit obtains the information about a ratio of a color area in each page of the copy job of the FAX job from the printer.
+---
+### [47] US-2015159010-A1
+- **タイトル:** Conducting interpenetrating polymer networks, related methods, compositions and systems
+- **要約:** The invention provides conducting polymeric interpenetrating network (IPN), and related methods and composition. The conductive surface of polymer of this invention comprises an interpenetrating network of two or more polymers, wherein at least one of the polymer networks is conducting polymer. Also provided is a method of producing a conducting surface on otherwise insulating bulk polymer, combining a first polymeric network with a second polymeric network, wherein the first or second polymeric network is based on a conducting polymer. The conducting surfaces are intended for use in flexible and wearable electronics; in photonics and photovoltaics; signal dissipation and suppression, corrosion protection; ionic and catalytic exchange; electrodes, filters and membranes; finishing textiles, bandages and carpets, healthcare devices, sensors. The present application also discloses devices manufactured from IPN conducting polymers and uses thereof.
+---
+### [48] US-2015159483-A1
+- **タイトル:** Apparatus and Method for Obtaining Formation Fluid Samples Utilizing a Flow Control Device in a Sample Tank
+- **要約:** In one aspect, an apparatus for use in a wellbore formed in a formation is disclosed that in one embodiment includes a probe for obtaining a formation fluid into a flow line, a pump for extracting formation fluid from a formation into the flow line, a chamber for receiving the formation fluid from the probe, and a flow control device that controls the formation fluid flow from the flow line into a chamber, wherein the flow control device includes a movable member that moves between a first seal position and a second seal position, wherein the flow control device is closed when the movable member is in the first seal position and the second seal position and is open when the movable member is between the first seal position and the second seal position.
+---
+### [49] US-2015160156-A1
+- **タイトル:** Cassette for electrophoresis and electrophoresis method
+- **要約:** To easily introduce a sample into a sample separation medium without formation of a well in the sample separation medium, a cassette ( 100 ) for electrophoresis includes a porous member ( 132 ) containing an unseparated sample, a sample separation medium ( 112 ) for separating the sample, and a pushing tool ( 131 ) that presses the porous member ( 132 ) or the sample separation medium ( 112 ) so that the porous member ( 132 ) is pushed into the sample separation medium ( 112 ).
+---
+### [50] US-2015168176-A1
+- **タイトル:** System and method of directional sensor calibration
+- **要約:** An improved total field calibration system and method is disclosed for reducing the rotational misalignment between magnetic and gravity sensors in a directional sensing system. The effect of variation of surface components of the Earth&#39;s magnetic field during the calibration process on magnetometer misalignment may be completely eliminated by requiring the magnetic dip derived from the sensing system to match that of the Earth&#39;s field obtained from a reference source. The calibration process can be performed without monitoring the declination change during the calibration process. Directional sensing systems can be calibrated accurately during a period when the Earth&#39;s magnetic field changes rapidly.
+---
+
+## 5. LLMによる評価
+### 分析
+
+1. **各特許のテーマ要素分析**
+   - [1] US-2016300172-A1: この特許は気象データの追跡に関連しており、逆浸透膜、機械学習、または最適化には関連がありません。
+   - [2] US-2016304129-A1: この特許は車の屋根構造に関しており、調査テーマと無関係です。
+   - [3] US-2016304375-A1: 膜蒸留を利用した水処理システムに関する特許ですが、逆浸透膜や機械学習を直接扱っているわけではありません。
+   - [4] US-2016310215-A1: 医療画像技術に関する特許で、調査テーマの核心である逆浸透膜、機械学習、最適化とは無関係です。
+   - [5] US-2016310925-A1: この特許は反応器の停止方法に関するもので、調査テーマとは無関係です。
+   - [6] US-2016311014-A1: 鋳造用の型に関する特許で、調査テーマの要素を含みません。
+   - [7] US-2016315365-A1: バッテリーの熱管理に用いる熱交換器に関する特許で、調査テーマとは無関係です。
+   - [8] US-2016318862-A1: 化学合成に関連する特許で、調査テーマと関連性がありません。
+   - [9] US-2016321185-A1: メモリシステムの制御に関する特許ですが、逆浸透膜や機械学習、最適化には関連がありません。
+   - [10] US-2016322849-A1: ワイヤレス充電デバイスに関する特許で、調査テーマとは関連がありません。
+
+2. **検索戦略の有効性と結果の価値**
+   - 指定された調査テーマは非常に特定的であり、逆浸透膜の運用において機械学習を使用する最適化技術に集中しています。しかし、提供された特許一覧はこれらの要素をほとんどまたは全く含んでおらず、ほとんどが全く異なる分野の技術に関連しています。
+   - IPC分類を広く設定したことが、関連のない多くの特許を含む結果をもたらした可能性があります。キーワード検索にもっと焦点を当て、特定の技術要素（逆浸透膜、機械学習、最適化）を含む特許のみをフィルタリングする戦略が有効であったかもしれません。 
+
+### 結論：
+この調査の意図にマッチした特許を抽出することはできませんでした。検索戦略は見直しを必要とし、より具体的なキーワードと厳しいフィルタリング条件を設定することで、より関連性の高い特許を見つけることが推奨されます。

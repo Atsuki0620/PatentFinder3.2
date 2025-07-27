@@ -1,0 +1,57 @@
+# 特許調査レポート (v3 - IPC AND版)
+
+## 1. 調査テーマ
+逆浸透膜における機械学習を用いた運転最適化
+
+## 2. 検索戦略
+- **特許分類:** 複数の分類コードすべてに合致 (AND検索)
+- **キーワード:** いずれかのキーワードに合致 (OR検索)
+- **意図:** キーワードで技術的可能性を広く探りつつ、複数の技術分野にまたがる特許（技術融合領域）のみをピンポイントで抽出する。
+
+## 3. 検索条件
+(省略)
+
+## 4. 実行されたSQLクエリ
+```sql
+
+    SELECT
+        p.publication_number,
+        (SELECT text FROM UNNEST(p.title_localized) WHERE language IN ('en', 'ja') LIMIT 1) as title,
+        (SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1) as abstract
+    FROM
+        `patents-public-data.patents.publications` AS p
+    WHERE EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_0) AND EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_1) AND EXISTS (SELECT 1 FROM UNNEST(p.ipc) AS ipc WHERE ipc.code LIKE @class_2) AND (LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_0 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_1 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_2 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_3 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_4 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_5 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_6 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_7 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_8 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_9 OR LOWER((SELECT text FROM UNNEST(p.abstract_localized) WHERE language IN ('en', 'ja') LIMIT 1)) LIKE @keyword_10)
+    LIMIT 5
+    
+```
+
+## 5. 検索結果
+
+### [1] US-9360848-B2
+- **タイトル:** Reverse-osmosis water desalination plant
+- **要約:** The invention relates to a reverse-osmosis water desalination plant comprising: a reverse-osmosis membrane unit (TP); at least one high-pressure pump (HP); a pressure-exchange-type energy collector (SRE) capable of transferring pressure from the concentrate leaving the membrane unit to a portion of the water to be treated; sensors for various operating parameters, in particular pressure, flow rate, temperature and salinity level, said sensors being provided at suitable locations; and control loops so that the various adjustable elements are maintained at a setpoint value. The plant also includes a secondary control system (D) comprising calculation means ( 26 ) programmed to determine, on the basis of the operating conditions of the plant supplied by the sensors, a combination of setpoint values for the flow rate of the high-pressure pump, the mixing ratio of the energy collector and the conversion ratio, which combination minimizes the energy consumption of the high-pressure pump.
+---
+
+### [2] US-10597308-B2
+- **タイトル:** Water treatment plant controlling method and controlling program, and water treatment system
+- **要約:** A water treatment plant controlling method including: determining whether or not there is a correlation, in water to be treated, between a water quality index and a concentration of a pollution component having no causal relationship with the water quality index, from a result of sample analysis of the water to be treated performed periodically; and (a) under a condition that there is a correlation, statistically analyzing a distribution of measurement values of the water quality index in a previous certain period of the water to be treated, and based on a result of the statistical analysis and the correlation, estimating the concentration of the pollution component of the water to be treated; and determining an operating condition of a water treatment plant for treating the water to be treated, based on the estimated concentration of the pollution component of the water to be treated; or (b) on a condition that a correlation is absent, statistically analyzing a distribution of concentration of the pollution component in all past sample analyses of the water to be treated, and based on a result of the statistical analysis, estimating the concentration of the pollution component of the water to be treated.
+---
+
+## 6. LLMによる評価
+### 分析評価
+
+#### 1. ヒットした特許が検索戦略の意図を反映しているかの分析
+- 特許１(US-9360848-B2):
+  - **説明**: 逆浸透膜ユニットの構成やセンサーの使用、制御システムの説明が含まれています。特許では、運転状態のリアルタイムデータに基づいて最適な設定値を算定し、エネルギー消費を最小限に抑えるための制御システムを備えています。
+  - **評価**: 機械学習の使用が明示されていないが、センサーデータに基づいて運転条件を最適化するアプローチは、機械学習の導入につながる可能性があります。
+
+- 特許２(US-10597308-B2):
+  - **説明**: 水質指標と汚染成分濃度との間の相関を分析し、この結果に基づいて処理条件を決定する方法を含んでいます。統計的分析が用いられており、機械学習技術の応用が示唆されています。
+  - **評価**: 逆浸透プロセスに直接言及していませんが、水処理システムの運転最適化を目的とした技術であり、類似の技術が逆浸透膜システムにも応用可能であると考えられます。
+
+#### 2. 検索戦略の有効性についての考察
+- **検索戦略**: 特許分類とキーワードの組み合わせは理にかなっていますが、逆浸透膜と機械学習を直接結びつける検索キーワードがなければ、より関連性の高い特許情報の抽出には至らない可能性があります。
+- **限界**: 検索戦略において機械学習の特徴をもう少し明確にすることで、より具体的かつ直接的な技術に関連する特許を抽出することができるかもしれません。
+
+#### 結論：
+- 調査の意図に完全にマッチした特許を抽出することはできませんでした。特許１と特許２はいずれも運転の最適化に関連はしていますが、明確に「逆浸透膜における機械学習を用いた運転最適化」という条件に合致するものではありません。したがって、より詳細な機械学習の応用とその具体的な方法を指定する必要があります。

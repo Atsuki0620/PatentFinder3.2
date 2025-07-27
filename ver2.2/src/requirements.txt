@@ -1,0 +1,12 @@
+streamlit
+langgraph
+langchain
+langchain-openai
+openai
+google-cloud-bigquery
+scikit-learn
+pandas
+pydantic
+python-dotenv
+db-dtypes
+google-cloud-bigquery-storage

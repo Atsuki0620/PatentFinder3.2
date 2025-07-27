@@ -1,0 +1,7 @@
+streamlit
+openai
+google-cloud-bigquery
+pandas
+plotly
+scikit-learn
+db-dtypes
