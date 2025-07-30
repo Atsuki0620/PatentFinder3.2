@@ -1,13 +1,5 @@
-feat: Finalize development session and update design documents
+feat: Upload PatentFinder v3.2 project files
 
-This commit concludes the current development session for PatentFinder v3.2.
-
-Key achievements in this session:
-- Established a robust, testable architecture by fully separating UI and core logic.
-- Implemented a test-driven approach using a dedicated script (`tests/test_sql_search_logic.py`) to stabilize the BigQuery search functionality.
-- Resolved persistent SQL generation errors and improved error handling in the `bq_client`.
-- The core search workflow, from conversational query to ranked results, is now stable and functional within the Streamlit application.
-
-This commit also includes:
-- A detailed session summary (`docs/session_summaries/20250727-220000.md`) documenting the debugging process and key learnings.
-- An updated system design guide (`docs/DesignGuide3.2_v4.md`) reflecting the current architecture and future roadmap.
+- Add core application logic and UI components
+- Include development history and documentation from previous versions (v2.2, v3.1)
+- Configure .gitignore to exclude environment and secret files
